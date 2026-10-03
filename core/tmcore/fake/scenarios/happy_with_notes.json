@@ -1,0 +1,21 @@
+{
+ "behaviour": {
+  "effects": [
+   "poster",
+   "shortcuts",
+   "calendar",
+   "buddy_rerun"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok_with_notes"
+ },
+ "expect_screen": "S20",
+ "summary": "the four harmless iOS 27 effects (posters, Shortcuts catalogue, calendar sync tables, Apple-account re-run) -> ok_with_notes"
+}

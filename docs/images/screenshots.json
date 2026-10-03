@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "about": "Screenshot list of DESIGN §15 -- the single source of names for docs/user/*, the demo autopilot (devtools/demo_screenshots.py) and .github/workflows/demo-screenshots.yml. Owner: docs. Check: python3 docs/tools/check_docs.py",
+  "languages": ["de", "en"],
+  "path": "docs/images/{group}/{lang}/{id}.png",
+  "markers": {
+    "demo": "tm-demo=1",
+    "vm": "tm-reviewed=1",
+    "device": "tm-reviewed=1"
+  },
+  "groups": {
+    "app": {
+      "source": "demo",
+      "how": "demo mode (real app + real engine + virtual iPhone, DEMO watermark); the app's demo autopilot driven by devtools/demo_screenshots.py, one run per scenario and language",
+      "items": [
+        {"id": "S00", "scenario": "happy", "title": "Welcome"},
+        {"id": "S01", "scenario": "happy", "title": "Please read"},
+        {"id": "S02", "scenario": "happy", "title": "Checking your Mac"},
+        {"id": "S03", "scenario": "happy", "title": "Quick iPhone check"},
+        {"id": "S04", "scenario": "happy", "title": "Create the Android backup"},
+        {"id": "S05", "scenario": "happy", "title": "Choose the backup"},
+        {"id": "S06", "scenario": "happy", "title": "Preparing your chats"},
+        {"id": "S07", "scenario": "happy", "title": "Threema on the iPhone"},
+        {"id": "S08", "scenario": "happy", "title": "iPhone settings"},
+        {"id": "S09", "scenario": "happy", "title": "Apple safety net"},
+        {"id": "S10a", "scenario": "happy", "title": "Set a password for iPhone backups"},
+        {"id": "S10b", "scenario": "wrong_backup_password", "title": "Your iPhone already has a backup password"},
+        {"id": "S10b-unknown", "scenario": "wrong_backup_password", "title": "Backup password unknown: what to do"},
+        {"id": "S11", "scenario": "happy", "title": "Take your iPhone offline"},
+        {"id": "S12", "scenario": "happy", "title": "Backing up your iPhone"},
+        {"id": "S13", "scenario": "happy", "title": "Preparing the transfer"},
+        {"id": "S14", "scenario": "happy", "title": "Ready to transfer"},
+        {"id": "S15", "scenario": "happy", "title": "Transfer in progress"},
+        {"id": "S16", "scenario": "happy", "title": "On the iPhone after the restart"},
+        {"id": "S17", "scenario": "happy", "title": "Check Threema"},
+        {"id": "S18", "scenario": "happy", "title": "Control backup"},
+        {"id": "S19", "scenario": "happy_with_notes", "title": "Done (with notes)"},
+        {"id": "S20", "scenario": "happy", "title": "Turn things back on and clean up"},
+        {"id": "S21-threema_only", "scenario": "threema_only_fail", "title": "Stopped: only Threema (R1)"},
+        {"id": "S21-data", "scenario": "data_fail", "title": "Stopped: other data changed (R2)"},
+        {"id": "S21-data_keychain", "scenario": "keychain_fail", "title": "Stopped: saved sign-ins missing (R2k)"},
+        {"id": "S21-setup_full", "scenario": "setup_full", "title": "Stopped: iPhone wants setup (R4)"},
+        {"id": "S22", "scenario": "data_fail", "title": "Restore your Apple backup"},
+        {"id": "S23", "scenario": "app_crash_after_send", "title": "Continue?"},
+        {"id": "F-IOS-UNKNOWN", "scenario": "ios_unknown", "title": "iOS version not tested yet"},
+        {"id": "F-AIRPLANE", "scenario": "airplane_off", "title": "Airplane mode was not on"},
+        {"id": "F-FINDMY", "scenario": "find_my_on", "title": "Find My is still on"},
+        {"id": "F-FRESHNESS", "scenario": "freshness_expired", "title": "The backup is too old"},
+        {"id": "F-DCIM", "scenario": "dcim_changed", "title": "Photos on the iPhone changed"},
+        {"id": "F-THREEMA-ID", "scenario": "id_mismatch", "title": "Different Threema ID"},
+        {"id": "F-PW-WRONG", "scenario": "wrong_backup_password", "title": "Wrong iPhone backup password"}
+      ]
+    },
+    "gatekeeper": {
+      "source": "vm",
+      "how": "clean macOS VM user per macOS version, release draft downloaded from GitHub; reviewed by the maintainer",
+      "items": [
+        {"id": "macos14-step1"}, {"id": "macos14-step2"}, {"id": "macos14-step3"}, {"id": "macos14-step4"},
+        {"id": "macos14-rightclick-open"},
+        {"id": "macos15-step1"}, {"id": "macos15-step2"}, {"id": "macos15-step3"}, {"id": "macos15-step4"},
+        {"id": "macos26-step1"}, {"id": "macos26-step2"}, {"id": "macos26-step3"}, {"id": "macos26-step4"},
+        {"id": "macos27-step1"}, {"id": "macos27-step2"}, {"id": "macos27-step3"}, {"id": "macos27-step4"}
+      ]
+    },
+    "device": {
+      "source": "device",
+      "how": "maintainer's test device with a test Apple Account and a test Threema ID; no names, no notifications, clean status bar, EXIF removed; reviewed in the PR",
+      "items": [
+        {"id": "iphone-software-update-automatic", "phase": "before"},
+        {"id": "iphone-app-store-app-updates", "phase": "before"},
+        {"id": "iphone-stolen-device-protection", "phase": "before"},
+        {"id": "iphone-find-my", "phase": "before"},
+        {"id": "iphone-icloud-backup-now", "phase": "before"},
+        {"id": "mac-finder-encrypt-local-backup", "phase": "before"},
+        {"id": "mac-finder-archive-backup", "phase": "before"},
+        {"id": "iphone-control-center-airplane-wifi-off", "phase": "before"},
+        {"id": "iphone-settings-bluetooth", "phase": "before"},
+        {"id": "iphone-trust-this-computer", "phase": "before"},
+        {"id": "threema-ios-restore-safe", "phase": "threema"},
+        {"id": "threema-ios-keep-messages", "phase": "threema"},
+        {"id": "threema-ios-add-contact", "phase": "threema"},
+        {"id": "iphone-app-switcher-close-threema", "phase": "threema"},
+        {"id": "iphone-restore-in-progress", "phase": "after"},
+        {"id": "iphone-swipe-up-to-upgrade", "phase": "after"},
+        {"id": "iphone-restore-completed", "phase": "after"},
+        {"id": "iphone-apple-account-signin", "phase": "after"},
+        {"id": "iphone-apple-pay-later", "phase": "after"},
+        {"id": "iphone-danger-transfer-apps-data", "phase": "after", "red": true},
+        {"id": "iphone-danger-erase", "phase": "after", "red": true},
+        {"id": "android-threema-backups", "phase": "android"},
+        {"id": "android-threema-safe", "phase": "android"},
+        {"id": "android-data-backup-media", "phase": "android"}
+      ]
+    }
+  }
+}

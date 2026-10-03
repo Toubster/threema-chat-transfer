@@ -1,0 +1,5 @@
+# sdist-vendor.lock -- pure-Python single-module packages without a wheel on PyPI (DESIGN §3.3 wants
+# --only-binary). build-core.sh downloads the sdist, checks sha256, and copies exactly MODULE into site-packages
+# with a minimal dist-info (name, version, licence) -- no setup.py is ever executed. Owner: pack.
+# Format: NAME VERSION SHA256 URL MODULE LICENSE
+hexdump 3.3 d781a43b0c16ace3f9366aade73e8ad3a7bd5137d58f0b45ab2d3f54876f20db https://files.pythonhosted.org/packages/source/h/hexdump/hexdump-3.3.zip hexdump.py Public-Domain

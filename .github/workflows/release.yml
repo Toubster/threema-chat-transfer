@@ -1,0 +1,147 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Release DRAFT (DESIGN §14). Manual only: builds an existing, annotated tag vX.Y.Z and creates a draft release with
+# the DMG, SHA256SUMS, SBOM, source bundle and build provenance attestations. It never publishes: the maintainer checks
+# the draft (clean macOS VMs, device run), signs SHA256SUMS offline with minisign and publishes by hand, only after
+# the explicit go (docs/MAINTAINER.md §6).
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "existing annotated tag, e.g. v0.9.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  CI_STRICT: "1"
+  XCODE_APP: /Applications/Xcode_16.4.app
+  PYTHONDONTWRITEBYTECODE: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  draft:
+    runs-on: macos-15
+    timeout-minutes: 120
+    environment: release
+    permissions:
+      contents: write        # create the draft release (never publish)
+      id-token: write        # build provenance attestation
+      attestations: write
+    env:
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: tag input is well-formed
+        run: |
+          if ! [[ "${TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::tag must look like vX.Y.Z or vX.Y.Z-suffix"; exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+        with:
+          python-version: "3.13"
+      - name: tag is annotated and matches every version marker
+        run: |
+          [ "$(git cat-file -t "refs/tags/${TAG}")" = "tag" ] || { echo "::error::${TAG} is not an annotated tag"; exit 1; }
+          version="${TAG#v}"
+          engine="$(python -c 'import re; print(re.search(r"__version__\s*=\s*\"([^\"]+)\"", open("core/tmcore/__init__.py").read()).group(1))')"
+          [ "${engine}" = "${version}" ] || { echo "::error::core/tmcore/__init__.py has ${engine}, tag says ${version}"; exit 1; }
+          grep -qE "^\| ${version//./\\.} \|" VERSIONS.md || { echo "::error::VERSIONS.md has no row for ${version}"; exit 1; }
+          grep -qE "^## ${version//./\\.}( |$)" CHANGELOG.md || { echo "::error::CHANGELOG.md has no section ${version}"; exit 1; }
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" > /dev/null 2>&1; then
+            echo "::error::a release for ${TAG} already exists; this workflow never changes an existing release"; exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: release notes from CHANGELOG.md (German + English section of this version)
+        run: |
+          version="${TAG#v}"
+          awk -v v="${version}" '
+            $0 ~ "^## " { if (p) exit; if (index($0, "## " v) == 1) { p = 1; next } }
+            p { print }' CHANGELOG.md > "${RUNNER_TEMP}/notes.md"
+          {
+            echo
+            echo "Download: \`threema-chat-transfer-${version}.dmg\`. Verify with \`SHA256SUMS\` (\`shasum -a 256 -c SHA256SUMS\`) and the"
+            echo "build provenance attestation (\`gh attestation verify threema-chat-transfer-${version}.dmg --repo ${GITHUB_REPOSITORY}\`)."
+            echo "First start: see \"Open Anyway\" in the README."
+          } >> "${RUNNER_TEMP}/notes.md"
+          test -s "${RUNNER_TEMP}/notes.md"
+      - name: privacy scan (tree + release notes; layer 2 when the repository secrets exist)
+        env:
+          SCRUB_DENY_B64: ${{ secrets.SCRUB_DENY_B64 }}
+          SCRUB_KEY: ${{ secrets.SCRUB_KEY }}
+        run: |
+          python scripts/scrub_check.py
+          python scripts/scrub_check.py --text-stdin release-notes < "${RUNNER_TEMP}/notes.md"
+      - name: select Xcode, install XcodeGen
+        run: |
+          sudo xcode-select -s "${XCODE_APP}" && xcodebuild -version
+          brew install xcodegen
+      - name: release tools
+        run: python -m pip install -r .github/release-requirements.txt
+      - name: packaging scripts present (always strict here)
+        run: |
+          .github/scripts/gate.sh "release packaging" packaging/fetch-python.sh packaging/build-core.sh \
+            packaging/build-importer.sh packaging/build-app.sh packaging/sign-adhoc.sh packaging/verify-bundle.sh \
+            packaging/make-dmg.sh packaging/make-sbom.sh packaging/make-source-bundle.sh
+      - name: build, sign ad-hoc inside-out, verify, DMG
+        run: |
+          packaging/fetch-python.sh
+          packaging/build-core.sh
+          packaging/build-importer.sh
+          packaging/build-app.sh
+          packaging/sign-adhoc.sh
+          packaging/verify-bundle.sh
+          packaging/make-dmg.sh
+          packaging/verify-bundle.sh --dmg "build/dist/threema-chat-transfer-${TAG#v}.dmg"
+      - name: SBOM, source bundle, checksums
+        run: |
+          packaging/make-sbom.sh
+          packaging/make-source-bundle.sh
+          version="${TAG#v}"
+          cd build/dist
+          ls -l
+          for f in "threema-chat-transfer-${version}.dmg" sbom.cdx.json source-bundle.tar.gz THIRD_PARTY_LICENSES.txt; do
+            test -s "$f" || { echo "::error::build/dist/$f missing"; exit 1; }
+          done
+          shasum -a 256 "threema-chat-transfer-${version}.dmg" sbom.cdx.json source-bundle.tar.gz THIRD_PARTY_LICENSES.txt > SHA256SUMS
+          cat SHA256SUMS
+      - name: dependency audit (known vulnerabilities in the pinned wheels)
+        run: pip-audit --strict --no-deps --disable-pip -r core/requirements.lock
+      - name: build provenance attestation
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8  # v4.2.2  scrub:ok sha1
+        with:
+          subject-path: |
+            build/dist/*.dmg
+            build/dist/SHA256SUMS
+            build/dist/sbom.cdx.json
+            build/dist/source-bundle.tar.gz
+      - name: create the DRAFT release (never published by CI)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${TAG#v}"
+          pre=()
+          if [[ "${version}" == 0.* || "${version}" == *-* ]]; then pre=(--prerelease); fi
+          gh release create "${TAG}" --repo "${GITHUB_REPOSITORY}" --draft --verify-tag "${pre[@]}" \
+            --title "Chat Transfer for Threema ${version}" --notes-file "${RUNNER_TEMP}/notes.md" \
+            "build/dist/threema-chat-transfer-${version}.dmg" build/dist/SHA256SUMS build/dist/sbom.cdx.json \
+            build/dist/source-bundle.tar.gz build/dist/THIRD_PARTY_LICENSES.txt
+          state="$(gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" --json isDraft --jq .isDraft)"
+          [ "${state}" = "true" ] || { echo "::error::release is not a draft"; exit 1; }
+          echo "::notice title=draft created::${TAG} is a draft. Next: VM checks, device run, minisign, layer-2 scrub of the DMG, publish by hand."

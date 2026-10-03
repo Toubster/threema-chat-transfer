@@ -1,0 +1,14 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "photos_bytes_estimate": 26000000000,
+  "photos_claimed_bytes": 26000000000
+ },
+ "expect": {
+  "cmd": "backup",
+  "code": "E_GUARD_PHOTOS_LIMIT"
+ },
+ "expect_screen": "F-PHOTOS-LIMIT",
+ "summary": "more than 20 GB of photos on the iPhone -> refused after the PRE backup"
+}

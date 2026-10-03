@@ -1,0 +1,15 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "android-inspect",
+  "code": "E_ANDROID_INCOMPLETE"
+ },
+ "expect_screen": "S05",
+ "flow": {
+  "android": "incomplete"
+ },
+ "summary": "the chosen Android file is incomplete (the backup was interrupted)"
+}

@@ -1,0 +1,10 @@
+# SOURCE -- provenance of V56/ThreemaData.momd (read by model/build-momd.sh; key=value, never sourced).
+# Threema for iOS, Copyright (c) Threema AG, GNU AGPL version 3 only. See model/README.md.
+MODEL_ID=V56
+REPO_URL=https://github.com/threema-ch/threema-ios.git
+TAG=7.4b74051
+COMMIT=35b749536bbbcd221bda6298ee44ac69435f7ad8  # scrub:ok sha1 (public git commit of threema-ios, not a UDID)
+XCDATAMODELD=ThreemaFramework/Persistence/Model/ThreemaData/ThreemaData.xcdatamodeld
+CURRENT_VERSION=ThreemaDataV56
+VERSION_IDENTIFIER=ThremaDataV56
+COMPILED_WITH=xcrun momc (Xcode 27.0, 27A266a), no extra flags

@@ -1,0 +1,13 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "threema": "none"
+ },
+ "expect": {
+  "cmd": "backup",
+  "code": "E_THREEMA_MISSING"
+ },
+ "expect_screen": "F-THREEMA-MISSING",
+ "summary": "Threema is not installed on the iPhone -> the PRE backup is refused"
+}

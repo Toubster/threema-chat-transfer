@@ -1,0 +1,23 @@
+{
+ "behaviour": {
+  "damage": [
+   "threema_store_corrupt"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "flow": {
+  "after_postcheck": [
+   "rollback"
+  ]
+ },
+ "summary": "threema_only, then R1 'Reset Threema' with the no-op set from the PRE backup -> ok"
+}

@@ -1,0 +1,126 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# XcodeGen project for the SwiftUI wizard (DESIGN §4.2). Generate with `xcodegen generate` in app/;
+# the .xcodeproj is never committed. Build: app/scripts/build.sh · tests: app/scripts/test.sh.
+name: ThreemaChatTransfer
+options:
+  deploymentTarget:
+    macOS: "14.0"
+  developmentLanguage: de
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    # One number for app/tmcore/importer (DESIGN §5.7, VERSIONS.md). packaging/build-app.sh overrides
+    # MARKETING_VERSION (numeric part) and CURRENT_PROJECT_VERSION and rewrites TMEngineVersion from tmcore;
+    # these defaults keep Xcode-run builds in step with core/tmcore/__init__.py (checked by AppVersionTests).
+    MARKETING_VERSION: "0.9.0"
+    TM_ENGINE_VERSION: "0.9.0-beta.1"
+    CURRENT_PROJECT_VERSION: 4         # CFBundleVersion, monotonic (packaging/CFBundleVersion)
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ARCHS: arm64                        # arm64 only (DESIGN §3.3)
+    EXCLUDED_ARCHS: x86_64
+    ONLY_ACTIVE_ARCH: NO
+    CODE_SIGN_IDENTITY: "-"             # ad-hoc, no team (DESIGN §14.1)
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEAD_CODE_STRIPPING: YES
+    CLANG_ENABLE_MODULES: YES
+  configs:
+    Debug:
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    Release:
+      SWIFT_COMPILATION_MODE: wholemodule
+targets:
+  ThreemaChatTransfer:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+        excludes:
+          - "**/.gitkeep"
+      - path: Resources
+        excludes:
+          - "Illustrations"
+      # Mock scenarios (synthetic, canonical example values only) for TM_ENGINE=mock:<name>; read-only.
+      - path: Tests/Scenarios
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        # neutral bundle id: no person or account name (the account appears only in repository URLs)
+        PRODUCT_BUNDLE_IDENTIFIER: org.threema-chat-transfer.app
+        # bundle and executable carry the display name; the Swift module keeps a name without spaces
+        PRODUCT_NAME: "Chat Transfer for Threema"
+        PRODUCT_MODULE_NAME: ThreemaChatTransfer
+        INFOPLIST_FILE: Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        COMBINE_HIDPI_IMAGES: YES
+  ThreemaChatTransferTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/Unit
+        excludes:
+          - ".gitkeep"
+      - path: Tests/Snapshots
+        excludes:
+          - ".gitkeep"
+    dependencies:
+      - target: ThreemaChatTransfer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.threema-chat-transfer.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chat Transfer for Threema.app/Contents/MacOS/Chat Transfer for Threema"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  ThreemaChatTransferUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: Tests/UI
+        excludes:
+          - ".gitkeep"
+    dependencies:
+      - target: ThreemaChatTransfer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.threema-chat-transfer.app.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: ThreemaChatTransfer
+schemes:
+  ThreemaChatTransfer:
+    build:
+      targets:
+        ThreemaChatTransfer: all
+        ThreemaChatTransferTests: [test]
+        ThreemaChatTransferUITests: [test]
+    run:
+      config: Debug
+      environmentVariables:
+        - variable: TM_ENGINE
+          value: mock:happy
+          isEnabled: false
+        - variable: TM_SCENARIOS_DIR
+          value: $(PROJECT_DIR)/Tests/Scenarios
+          isEnabled: false
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - name: ThreemaChatTransferTests
+        - name: ThreemaChatTransferUITests
+  ThreemaChatTransferUnit:
+    build:
+      targets:
+        ThreemaChatTransfer: all
+        ThreemaChatTransferTests: [test]
+    test:
+      config: Debug
+      targets:
+        - name: ThreemaChatTransferTests

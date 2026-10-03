@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Only the templates; security problems go through the private advisory form that GitHub offers next to these
+# templates when private vulnerability reporting is enabled (SECURITY.md).
+blank_issues_enabled: false

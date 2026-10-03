@@ -1,0 +1,13 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "model": "tampered"
+ },
+ "expect": {
+  "cmd": "backup",
+  "code": "E_THREEMA_MODEL_UNKNOWN"
+ },
+ "expect_screen": "F-THREEMA-VERSION",
+ "summary": "the Threema store uses an unknown Core Data model -> refused before anything happens on the iPhone"
+}

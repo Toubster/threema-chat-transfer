@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# pre-push: BLOCKING. Full tree + commit messages of the pushed range, layer 1 AND layer 2 (deny list required,
+# DESIGN §10.3). Publishing additionally needs the maintainer's explicit go -- this hook is not that go.
+# Pushed commits must also carry no personal metadata (--publish-identity): a GitHub no-reply identity whose name is
+# the handle, and +0000 dates. Commit with `TZ=UTC git commit ...` (or export TZ=UTC in the shell for this repo).
+ROOT="$(git rev-parse --show-toplevel)" || exit 1
+PY="$ROOT/.venv/bin/python"; [ -x "$PY" ] || PY="python3"
+"$PY" "$ROOT/scripts/scrub_check.py" --root "$ROOT" --require-layer2 || exit 1
+ZERO=0000000000000000000000000000000000000000  # scrub:ok sha1 (git null id)
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$ZERO" ] && continue
+  if [ "$remote_sha" = "$ZERO" ]; then RANGE="$local_sha"; else RANGE="$remote_sha..$local_sha"; fi
+  "$PY" "$ROOT/scripts/scrub_check.py" --root "$ROOT" --require-layer2 --no-files --publish-identity --commits "$RANGE" \
+    || { echo "pre-push: commit metadata not neutral (no-reply identity, TZ=UTC) or a finding in a message" >&2; exit 1; }
+done
+exit 0

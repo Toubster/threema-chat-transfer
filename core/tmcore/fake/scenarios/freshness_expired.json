@@ -1,0 +1,18 @@
+{
+ "behaviour": {
+  "clock_skip_min": {
+   "restore": 61
+  }
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "the PRE backup is older than 60 min when the transfer starts -> automatic new backup + prepare, then the transfer"
+}

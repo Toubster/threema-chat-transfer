@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Python packages the importer check suite needs for its synthetic fixtures (importer/Tests/run_checks.py).
+Pillow==12.3.0

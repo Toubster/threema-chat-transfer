@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Python tools used only by .github/workflows/release.yml (exact versions).
+cyclonedx-bom==7.5.0
+pip-audit==2.10.1

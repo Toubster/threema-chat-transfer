@@ -1,0 +1,18 @@
+{
+ "behaviour": {
+  "damage": [
+   "home_wipe"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "postcheck",
+  "code": "R_OK",
+  "verdict": "data"
+ },
+ "expect_screen": "S21",
+ "summary": "settings/TCC/SMS areas were wiped by the restore (partial-payload pattern) -> data (R2)"
+}

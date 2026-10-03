@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Version nicht unterstützt / Version not supported
+description: Die App meldet eine noch nicht geprüfte iOS-, Threema- oder Android-Version. / The app reports an iOS, Threema or Android version that is not tested yet.
+labels: [compat]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Chat Transfer for Threema überträgt nur auf Versionen, die am Gerät geprüft sind (siehe `docs/COMPAT-POLICY.md`). Neue
+        iOS-Versionen bemerken wir automatisch; diese Meldung hilft uns, Prioritäten zu setzen. Bitte installieren Sie
+        bis zu einem Update von Chat Transfer for Threema keine weiteren Updates. Keine persönlichen Daten.
+
+        Chat Transfer for Threema only transfers on versions that have been tested on a device (see `docs/COMPAT-POLICY.md`). We
+        notice new iOS versions automatically; this report helps us prioritise. Please do not install further updates
+        until Chat Transfer for Threema is updated. No personal data.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Was ist nicht unterstützt? / What is not supported?
+      options:
+        - "iOS-Version / iOS version (F-IOS-UNKNOWN)"
+        - "Threema-Version auf dem iPhone / Threema version on the iPhone (F-THREEMA-VERSION)"
+        - "Android-Sicherung / Android backup format (F-ANDROID-FORMAT)"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version wie in der App angezeigt / Version as shown in the app
+      placeholder: "iOS 27.0 (24A437) · Threema 7.4 · Format 27"
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Version von Chat Transfer for Threema / Chat Transfer for Threema version
+      placeholder: "0.9.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Gerät, falls iOS / Device, if iOS
+      description: Nur die Gerätefamilie, kein Gerätename. / Only the device family, not the device name.
+      options:
+        - "nicht relevant / not relevant"
+        - iPhone (aktuelles Modell / current model)
+        - iPhone (älteres Modell / older model)

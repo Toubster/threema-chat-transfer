@@ -1,0 +1,16 @@
+{
+ "behaviour": {
+  "restore_end": "link_lost_early"
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "the cable drops at 97 % while sending, the iPhone restarted anyway -> F-RESTORE-MID, the user continues with the check"
+}

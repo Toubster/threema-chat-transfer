@@ -1,0 +1,10 @@
+;; SPDX-License-Identifier: AGPL-3.0-or-later
+;; Sandbox profile for tmcore (DESIGN §10.1): no network at all, except Apple's usbmuxd socket for the
+;; USB connection to the iPhone. Used by LiveEngine via /usr/bin/sandbox-exec when macOS provides it.
+;; The engine additionally installs its own socket guard (only AF_UNIX; none at all with --fake-device).
+(version 1)
+(allow default)
+(deny network*)
+(allow network-outbound
+    (remote unix-socket (path-literal "/var/run/usbmuxd"))
+    (remote unix-socket (path-literal "/private/var/run/usbmuxd")))

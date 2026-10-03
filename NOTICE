@@ -1,0 +1,43 @@
+Chat Transfer for Threema – Copyright (c) 2026 the Chat Transfer for Threema contributors.
+https://github.com/Toubster/threema-chat-transfer
+
+Unofficial. Not affiliated with, endorsed or reviewed by Threema AG, Apple Inc. or Google LLC. Threema is a trademark
+of Threema AG; Apple and iPhone are trademarks of Apple Inc.; Android is a trademark of Google LLC. See TRADEMARKS.md.
+
+LICENCES
+
+1. Own source code (every file with "SPDX-License-Identifier: AGPL-3.0-or-later"):
+   GNU Affero General Public License, version 3 or (at your option) any later version.
+
+2. Threema iOS Core Data model (model/, "SPDX-License-Identifier: AGPL-3.0-only"):
+   compiled from Threema for iOS (https://github.com/threema-ch/threema-ios, commit 35b749536bbb, tag 7.4b74051),
+   Copyright (c) Threema AG, GNU Affero General Public License, version 3 only. See model/README.md.
+
+3. The Threema Android backup format was implemented from the Threema for Android source code (AGPL-3.0); no code was
+   copied.
+
+4. Bundled third-party components: pymobiledevice3 (GPL-3.0-or-later), CPython via python-build-standalone, OpenSSL,
+   cryptography, construct, pycryptodome, iphone_backup_decrypt, pyzipper and further components listed in
+   THIRD_PARTY_LICENSES (generated at build time from the wheel metadata and the python-build-standalone component
+   list). Each keeps its own licence.
+
+COMBINED WORK
+
+The distributed application combines works under GPL-3.0-or-later (pymobiledevice3) and AGPL-3.0 (the model and our
+own code). This is permitted by section 13 of both licences: GPLv3 §13 ("Use with the GNU Affero General Public
+License") allows linking or combining a GPLv3 work with an AGPLv3 work into a single combined work, and AGPLv3 §13
+("Remote Network Interaction; Use with the GNU General Public License") allows the reverse. The GPL-covered parts stay
+under the GPL; the special requirements of AGPLv3 §13 concerning interaction through a network apply to the
+combination as such. Because the bundled model is AGPL-3.0-only, the application as a whole is distributed under the
+GNU Affero General Public License, version 3.
+
+Neither licence permits adding further restrictions (GPLv3/AGPLv3 §§ 7 and 10), so the application cannot be offered
+under a "non-commercial only" licence. Anyone may use, study, change and share it; whoever conveys it or a modified
+version, or offers a modified version to users over a network, must provide the complete corresponding source code
+under the same licence.
+
+The complete corresponding source of a release (this repository at the release tag, the source distributions of the
+bundled GPL components and references to the Python runtime and the Threema model) is published with every release as
+source-bundle.tar.gz.
+
+NO WARRANTY: see sections 15 and 16 of the GNU Affero General Public License (LICENSE).

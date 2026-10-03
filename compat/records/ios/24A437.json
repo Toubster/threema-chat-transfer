@@ -1,0 +1,32 @@
+{"schema": 1, "kind": "ios-record", "build": "24A437", "ios": "27.0", "device_class": "maintainer",
+ "runs": [
+  {"kind": "C0", "date": "2026-10-01", "verdict": "pass",
+   "notes": ["N_POSTER_CACHE_REGENERATED", "N_SHORTCUTS_CATALOGUE_REGENERATED", "N_CALENDAR_SYNC_TABLES",
+             "N_APPLE_ACCOUNT_RERUN"],
+   "counts": {
+    "noop_canary": 1, "keyboard_domain_in_set": 0, "imported_store": 0, "shipped_app_run": 0,
+    "acceptance_run_pending": 1,
+    "restore_opt_system": 1, "restore_opt_reboot": 1, "restore_opt_copy": 0, "restore_opt_settings": 0,
+    "restore_opt_remove": 0, "restore_opt_skip_apps": 1,
+    "guards_pass": 13, "guards_warn": 1, "guards_fail": 0, "verify_restoreset_pass": 1,
+    "set_domains": 6, "set_threema_domains": 4, "set_home_domain": 1, "set_cameraroll_domain": 1,
+    "screen_restore_in_progress": 1, "device_rebooted_by_itself": 1, "screen_swipe_up_to_upgrade": 1,
+    "screen_restore_completed": 1, "setup_assistant_apple_account_only": 1, "apple_pay_readd_prompt": 1,
+    "home_screen_unchanged": 1, "widgets_unchanged": 1, "settings_unchanged": 1,
+    "backups_encrypted": 1,
+    "identity_domains_checked": 2, "identity_missing": 0, "identity_extra": 0, "identity_different": 0,
+    "domain_verdict_churn": 2, "domain_verdict_note": 1, "domain_verdict_alert": 1, "db_verdict_note": 1,
+    "gate_alerts_raw": 5, "gate_alerts_after_classification": 1, "gate_alerts_waived": 1,
+    "gate_alert_keyboard_collapse_waived": 1, "keyboard_fix_in_builder": 1,
+    "benign_note_classes": 4
+   }},
+  {"kind": "app_run", "date": "2026-10-03", "app_version": "0.3.1-dev", "verdict": "stopped_before_restore",
+   "notes": [],
+   "counts": {
+    "android_import_pass": 1, "ios_backup_pass": 1, "prepare_pass": 1,
+    "restore_guards_pass": 15, "restore_guards_warn": 0, "restore_guards_fail": 0,
+    "restore_sent": 1, "device_refused": 1, "device_refused_mberror_211": 1, "find_my_on_at_send": 1,
+    "engine_code_e_guard_findmy": 1, "device_changed": 0, "restore_applied": 0, "postcheck_run": 0,
+    "app_restore_executed": 0, "acceptance_run_pending": 1
+   }}
+ ]}

@@ -1,0 +1,159 @@
+# scrub-allowlist.txt -- allowed test values for scripts/scrub_check.py (DESIGN §10.3, layer 1).
+# Never add real values here. Every entry needs a reason in the comment.
+#
+#   id:<TOKEN>                 an 8-character token that looks like a Threema ID but is a technical name
+#   email-domain:<domain>      reserved example domains (RFC 2606/6761) besides example.com/.org/.net
+#   email:<address>            one exact public no-reply address (e.g. a commit trailer)
+#   sha256:<hex> <path>        an allowed binary file (only the digest counts; the path is informational)
+#
+# Fixture Threema IDs need no entry: everything starting with "ZZ" (or "*ZZ" for gateway IDs) is synthetic.
+
+# iOS DCIM folder name (CameraRollDomain Media/DCIM/100APPLE), not a Threema ID
+id:100APPLE
+
+# BSD socket flag AI_V4MAPPED (getaddrinfo), not a Threema ID
+id:V4MAPPED
+
+# RFC 2606 reserved TLD used by the synthetic Android fixture
+email-domain:example.invalid
+
+# Co-Authored-By trailer of the AI coding assistant (public no-reply address)
+email:noreply@anthropic.com
+
+# BEGIN assembled binaries (managed by the private assemble script; do not edit by hand)
+sha256:afc95b0832b11dfdf99d603ea8b145cd731a4855e8e1abce65de822acf261ccb model/V56/ThreemaData.momd/ThreemaData.mom
+sha256:b31f4fba91569c2ca3d52dac2b5af821e2ff343f9e30f5f798e40205bb53948b model/V56/ThreemaData.momd/ThreemaDataV10.mom
+sha256:1ce3244030371ed6bf1bff89667e4344b0a6aa8cf2953e67d226cf3bb6bda9d7 model/V56/ThreemaData.momd/ThreemaDataV11.mom
+sha256:f101298905b988463f1cfd496cd508024b1fb0b811115e3712aff0c1d6e1c9e9 model/V56/ThreemaData.momd/ThreemaDataV12.mom
+sha256:b9496790b86187acabbb241f1bd07f05daa518d0ccd0e4c888488ce7a1198fa3 model/V56/ThreemaData.momd/ThreemaDataV13.mom
+sha256:3b3538b97de2885615bb144f4192e15317820efdd46a878d6aeddb55e5edd694 model/V56/ThreemaData.momd/ThreemaDataV14.mom
+sha256:5ad1429f566a136341efb1451daf6c2154b70565770e1b16288892b7835ed3d4 model/V56/ThreemaData.momd/ThreemaDataV15.mom
+sha256:2504bd3aeaf8bf977af275ad6e98c29e455108156ef625ca09e5640618cc263f model/V56/ThreemaData.momd/ThreemaDataV16.mom
+sha256:b0574f02e2f009e1b738bb9f9b4b96390c10ac529dc93830dcbf1f446b678ccf model/V56/ThreemaData.momd/ThreemaDataV17.mom
+sha256:f02c97a1e3ee1f826ab278c24141c03078089d6fbfbd6d311307a4e78bf4133d model/V56/ThreemaData.momd/ThreemaDataV18.mom
+sha256:49ea4985dd9dd016f93bd9f47a8a110080837f6ef985e7777f37de8b9cff6221 model/V56/ThreemaData.momd/ThreemaDataV19.mom
+sha256:3e5a6709f4c34a690552d5d2454d03d1f23dedbe88a626932ac8d82d9c546e82 model/V56/ThreemaData.momd/ThreemaDataV2.mom
+sha256:1a09487b03c1bd21af3bb088ac0c7a132a2313619f7d12872c1ec98f87233778 model/V56/ThreemaData.momd/ThreemaDataV20.mom
+sha256:6cc1b7a532b5378d6e55c7283fb4cb9c64ff35e7b67233e9d30bd27d5c3c6abd model/V56/ThreemaData.momd/ThreemaDataV21.mom
+sha256:608e30c8b3e5a6fe18ba13f3e21d887d59d634d2f6c84959ff6b0711e08670cf model/V56/ThreemaData.momd/ThreemaDataV22.mom
+sha256:f11fe0188f445af78d37dec844b7c68e89058f62d8320c717bb2d9a93699cbbd model/V56/ThreemaData.momd/ThreemaDataV23.mom
+sha256:4db78ffc6890225e3334a2c3bf4c6dc6e121dfe0164d61a952b5a828010d5b7d model/V56/ThreemaData.momd/ThreemaDataV24.mom
+sha256:07975679268cc67f2d4996fa92556e3ecac6cffabe48362c6b6af3834163da9a model/V56/ThreemaData.momd/ThreemaDataV25.mom
+sha256:ad7752f8db6e63077e9effc9fa0611b4b1e5e9a0a6c4fb1c9135211f99d86c04 model/V56/ThreemaData.momd/ThreemaDataV26.mom
+sha256:0b2ce53ea3342777ed493574473b6543a261c12fcf566426eaa4322e4ee1ee0f model/V56/ThreemaData.momd/ThreemaDataV27.mom
+sha256:29346369143286e24bdfe59e23bf0b05ef0b305d95573c7682126a264eda5fae model/V56/ThreemaData.momd/ThreemaDataV28.mom
+sha256:4a8974580f4ec5312e1ca6d23bbea8ccadf23cf3386c922fa4bc458f0b06d071 model/V56/ThreemaData.momd/ThreemaDataV29.mom
+sha256:8c61b5c3ffd0cf774e266f281a9e205ca2d43ed556501aeaa3bc63e4490d3d83 model/V56/ThreemaData.momd/ThreemaDataV3.mom
+sha256:c51826cebd1dc0b326781fdff158697475f4e92225f754b0b2d3e43a62c3b9a0 model/V56/ThreemaData.momd/ThreemaDataV30.mom
+sha256:c0a8c01be0ffe81a54d305feae1699d47e708781e8de58ef2ce4fc554989bf82 model/V56/ThreemaData.momd/ThreemaDataV31.mom
+sha256:9bf8182b0ba31387413d807806f59d1ff2caa24c32d8675d78c3687efe73b6c2 model/V56/ThreemaData.momd/ThreemaDataV32.mom
+sha256:d96d435dfcb8dfe2da90dfc5af1e109bae2b2b4d05cf1a7818da334b1f5c3bd6 model/V56/ThreemaData.momd/ThreemaDataV33.mom
+sha256:81090f2b99c0b340649d86dcb7648192a45b68f175da6a040903543cfb98a84a model/V56/ThreemaData.momd/ThreemaDataV34.mom
+sha256:2e56688013f46b6b9fbf63865239c080f711e5ae90097c35c49817e7e3d2a2c7 model/V56/ThreemaData.momd/ThreemaDataV35.mom
+sha256:f6c1180581558c093c33e38919aa43cbee2287f3648226768c3b9dd554abd6f3 model/V56/ThreemaData.momd/ThreemaDataV36.mom
+sha256:da49abc0ce3ce52f61d32692d4527dfcaa8c78e3e2c0e8ab5eb9cf9cafde323c model/V56/ThreemaData.momd/ThreemaDataV37.mom
+sha256:e4f2b36f3adfcbd97fb35163e45c539f2f8dc9d6428baf6366821867cbcf9d57 model/V56/ThreemaData.momd/ThreemaDataV38.mom
+sha256:e834ae5ac5b85a7118df32992a1b8e2c4efe8f57cde2779f42da8df361ca81c3 model/V56/ThreemaData.momd/ThreemaDataV39.mom
+sha256:7c503609878a0e3801cea3d7932ccb02eaaa36304eff665a6497e6b675a09539 model/V56/ThreemaData.momd/ThreemaDataV4.mom
+sha256:15830372c9aa8c79b47f8869f7b1c26ff8f8c025ff1b4d90b6187c1b61af6e21 model/V56/ThreemaData.momd/ThreemaDataV40.mom
+sha256:5fb38c3fe010ca9019aa3dac3a63d84c0518c08cbc8d9310746ff235a90335e6 model/V56/ThreemaData.momd/ThreemaDataV41.mom
+sha256:e716b80379bf99350370a84f491705787628f2a13a8693a080296236290364fd model/V56/ThreemaData.momd/ThreemaDataV42.mom
+sha256:74559f06b3defdd874d6a100767d34f5a5c7d72435e1178fd5c9cb026e18b390 model/V56/ThreemaData.momd/ThreemaDataV43.mom
+sha256:38d2b8d60437ca12964525281e82ed1053f7800624d1ca0a4f3fe81ef4d88a89 model/V56/ThreemaData.momd/ThreemaDataV44.mom
+sha256:e5eeb16c8891a48a612cf686dcff1ae10d6362a2d62dba4f582b77c6f5c30c0c model/V56/ThreemaData.momd/ThreemaDataV45.mom
+sha256:b07e50533711bd5cae77cd0382b6f8c65cd08749bbf646e498cf6304430bb89a model/V56/ThreemaData.momd/ThreemaDataV46.mom
+sha256:5259faa30ab11b27644947084cb7ad8f6a054f1824c52af08e6a76c49ae6ed14 model/V56/ThreemaData.momd/ThreemaDataV47.mom
+sha256:807054344eb2d261fd29fba4c38bd65769509ad924431de25ff6f291ffa55846 model/V56/ThreemaData.momd/ThreemaDataV48.mom
+sha256:c845bb0ff8fd0c9bbab5afde863e894daad58ba5ea7bd475f788b0458e87495b model/V56/ThreemaData.momd/ThreemaDataV49.mom
+sha256:a0541a13c2f111fac59fe8928532dc9b716feee884820225405121b930d036db model/V56/ThreemaData.momd/ThreemaDataV5.mom
+sha256:9d39bce3bda9785f2d135867bbdac06851dcb70cdb9edb23a155f8d0616a8a40 model/V56/ThreemaData.momd/ThreemaDataV50.mom
+sha256:3883be64855bcc1c297da9d9a04873eba285024d80fd1337dd473bdcd0368bbb model/V56/ThreemaData.momd/ThreemaDataV51.mom
+sha256:fdf6f5f0cb4888c66253a1fb7f2a535beb0b5a5f6962f5ce418ae8a63bcec98a model/V56/ThreemaData.momd/ThreemaDataV52.mom
+sha256:5d87eaf4de0445ff709e6cc64e0a90c5ae60565e9a62221fd51f43aa2a356e11 model/V56/ThreemaData.momd/ThreemaDataV53.mom
+sha256:374c5ebc8eb852c1c6fb640a4284fc0dffe8b15996c89a8d03236da264910ece model/V56/ThreemaData.momd/ThreemaDataV54.mom
+sha256:744538c95dae3f0a4aa7103901694f88a441f1107a4846b03c4719cbb0855c90 model/V56/ThreemaData.momd/ThreemaDataV55.mom
+sha256:07746516e8cd23e9342e12b5585fd2bde501a89d8f583c20c96ab64b2998e2a3 model/V56/ThreemaData.momd/ThreemaDataV56.mom
+sha256:e4c99d25b13760dd37bad5f3748b96de19f88cb5103e52720dde940d19bd00be model/V56/ThreemaData.momd/ThreemaDataV56.omo
+sha256:1e71ee9669a8166415391f150022e67e970e9049a5838b8c60805e08805c9709 model/V56/ThreemaData.momd/ThreemaDataV6.mom
+sha256:7be8de659b4614943d013bd76156d609e37fee134a2a31fd56ba3684bcb7cf59 model/V56/ThreemaData.momd/ThreemaDataV7.mom
+sha256:47d7e31039e8bbb538679f7f83879ccbd7555f00e8e4acd5b804bea3ef39b0b1 model/V56/ThreemaData.momd/ThreemaDataV8.mom
+sha256:39579b3bd31572cc24ff82f49ab5e7f7cb35f81224037235bb6eb19a672c2346 model/V56/ThreemaData.momd/ThreemaDataV9.mom
+sha256:804d42ffdf270771f6d98f3562b1241cea403efcdf09a4240ba174bf05ed931d model/V56/ThreemaData.momd/VersionInfo.plist
+# END assembled binaries
+
+# Demo screenshots (docs/images/app/<lang>/*.png): generated in demo mode (DEMO watermark, PNG text chunk
+# tm-demo=1); the block is rewritten by .github/scripts/allowlist_block.py (demo-screenshots workflow, integrator).
+# BEGIN demo screenshots (managed by .github/workflows/demo-screenshots.yml; do not edit by hand)
+sha256:27730e83e4bd27345a6e48bdfb963c9b9090021e1720cd04f101e3919b25fe48 docs/images/app/de/F-AIRPLANE.png
+sha256:1533fb5fe71beaa6da932fd97fbe276cb42d045a330293eeda2a5a2f48d7ff73 docs/images/app/de/F-DCIM.png
+sha256:882e2c70078154aae308e74fa9d069bdad7ebb158804f9c677e11baef5da0efc docs/images/app/de/F-FINDMY.png
+sha256:d6503d86996d5eec1f15b33ad186607a7286d50c6254aa76f9ee140e37a9716a docs/images/app/de/F-FRESHNESS.png
+sha256:6e0698d92591a5d0f55e4c2d0895f134d6ab20e18908c10f9540b4b6afb6d74d docs/images/app/de/F-IOS-UNKNOWN.png
+sha256:0d012fb4b664639c11e588703f64c00e5bb1374c145db319a512f5c9e15dd296 docs/images/app/de/F-PW-WRONG.png
+sha256:d97af5cc187590462015776a9a3aa74f6f083665543f34a6475f9ea82305fc29 docs/images/app/de/F-THREEMA-ID.png
+sha256:1f7be6e8208a2d894faff8bda3bfb2b6b84929e20a034f44a5ea9d9d242e0b87 docs/images/app/de/S00.png
+sha256:f601abc187f95a2b98ffeb5dabfd9264390bdc03e0027ba6b6cc545e39357dd6 docs/images/app/de/S01.png
+sha256:f8a62cd1486d6d3fe038029082f7d65b0e9a7872b008f98c7b18a814fa92f480 docs/images/app/de/S02.png
+sha256:5c5dbd512a9214be27f56159c547d38ea1ea915741eee34b7607b8844aff814a docs/images/app/de/S03.png
+sha256:2f1c2f402271788847b346dbfd254ef092e3be8c5ab535d416502cd511d374e7 docs/images/app/de/S04.png
+sha256:93f94148f9ee0e077423c316f1dd8e6298b473dda7cad7f0068e71e109304e3b docs/images/app/de/S05.png
+sha256:985119efe5dd19879f4f5a5b8e7e36690f8414489eab32be0c9a6aaacb7d4b26 docs/images/app/de/S06.png
+sha256:72b55d1c817e265a6c667a43c7d35b4d41cbccda9d0e7d18105d46604cfd59fb docs/images/app/de/S07.png
+sha256:3f7a345cff4d9c345da95f0f86519a39e4bb0d46d3edd5b997a577f05fb17cb2 docs/images/app/de/S08.png
+sha256:d0e2b055effb71c2fe10dccfc319362b2660c2ecfb3fee1ad265f36c4378cc50 docs/images/app/de/S09.png
+sha256:ef53a44fd78534a83ea2486a075a1b9e55c85b8b926c8c611c71ffe364d9acf1 docs/images/app/de/S10a.png
+sha256:5b79f531ca2359f9522f88eafd9278bbc3d962222700ffea78c7413f17c7220e docs/images/app/de/S10b-unknown.png
+sha256:97120be099a1b66a3d9ec4f1db9be1bac674a9c50316893c0c6e3907e3e9a430 docs/images/app/de/S10b.png
+sha256:3a0a0012a2eab783fa6407097715d2dcf5ebfd870d25856eddacbf3723296bf8 docs/images/app/de/S11.png
+sha256:cbf34e58b43d9181723d428aafae1daf2ad5cd21c1723d558e9579bb63e4eaa7 docs/images/app/de/S12.png
+sha256:cfd252f372576543f4dd123b78dc5f1132060fe0bce720dbd7375033a6f08940 docs/images/app/de/S13.png
+sha256:f8e55e3b382e0b16e215a5885f7e758fdbdc2eb46f1c59a1edc4b14a611f6a62 docs/images/app/de/S14.png
+sha256:31ebac8e259807c54cdc1e8a8a2a21ae54be84f25c03cbebfdb427e4de88501a docs/images/app/de/S15.png
+sha256:24780ba28fb36c233a273f458a1dae3943a8b278beddae832ca2e3d6efedae8f docs/images/app/de/S16.png
+sha256:a3decf94b4b485c898a9b91a443338c4e3d56369053fa8b7f71d92ec4b1f8306 docs/images/app/de/S17.png
+sha256:47f873272f65d592797595865e27c8fd9553d578dab890bcf83002fa5f202cbc docs/images/app/de/S18.png
+sha256:51578b1d7fc8db7c2836d343df5ac483e65623916ad719c14a285a1ba4dbed41 docs/images/app/de/S19.png
+sha256:b5f1939b3533c2f0dc617d31b38300f30061ee13859c0b78a7dbbf56041a18b0 docs/images/app/de/S20.png
+sha256:d2dbb32eba9adc125f671d209780d95c26c91f5ff50ae6ebc70cc068705237f5 docs/images/app/de/S21-data.png
+sha256:163b44cb69195e860ea134f54a8897337afb590f032521bf15603a196dcfdf61 docs/images/app/de/S21-data_keychain.png
+sha256:d15de2d4ae7a399ffa96948bccae50742e5f5363e379043a0127d4fdf988e828 docs/images/app/de/S21-setup_full.png
+sha256:398e87ecf85556c95bee4b17a9de22cd7e6501af11ef70b86347f5dbe114ad71 docs/images/app/de/S21-threema_only.png
+sha256:d58fac348829406821fa05b67156f02cbc0684bc145b0549a8501241ff3047dd docs/images/app/de/S22.png
+sha256:3a53bef1fe6c91d2fb83b17a1a83c4f9b78a6914c2173d5bd13b4ffd1bc2442d docs/images/app/de/S23.png
+sha256:523533ec42353791acb278be2fad7c658e2f131fd1f7f2207e89cdceba4c010f docs/images/app/en/F-AIRPLANE.png
+sha256:1ecef1ac282404a1a9c0418c9c1b4e549a1992b0443ecf16b72159e086393fc1 docs/images/app/en/F-DCIM.png
+sha256:bb877e8fa057577d9cd90f423d0120ee1f63344daae3538107efa0118f7897f9 docs/images/app/en/F-FINDMY.png
+sha256:b2de0b04bc76fbfed16e02dc7d0d51c8ebd2c12ccdc49dc87552e6257d9c2525 docs/images/app/en/F-FRESHNESS.png
+sha256:e50e4d686fa1da23964aedb3c190f7d73807289285908e72b19c64043b511ccc docs/images/app/en/F-IOS-UNKNOWN.png
+sha256:67d4c3ae378fd18cedb6c8d34635db7c419260d3bda1ad27a986d93042fc4870 docs/images/app/en/F-PW-WRONG.png
+sha256:22b1fd1fba7abe025294a26667343378cca722f79682937b113898c389d8ece0 docs/images/app/en/F-THREEMA-ID.png
+sha256:b7d9bc0a4f0e313252651e30c7d1677ad2ca660fa7956439d074c7d9776ed780 docs/images/app/en/S00.png
+sha256:07aca97b773ad374b7eb7dd52124b52508dd9a67db814fa1eb8ae048ca44a963 docs/images/app/en/S01.png
+sha256:9dacad32c41577871af3930700065f9710b17fbc337ffa7f1619dec6c3e4c577 docs/images/app/en/S02.png
+sha256:2b9534efed50192bb4e7b00ce04c11758632c210c18bea3168d1f8d9f9b470c0 docs/images/app/en/S03.png
+sha256:e8c4118fd28fac18ca47635df08a0bc76286dfb5008d25274d56e73b27e1db25 docs/images/app/en/S04.png
+sha256:6d4d220a6a51c510a96a7043b6692f1cb26bcfdfd48d57f1187feecf7a1b08b8 docs/images/app/en/S05.png
+sha256:937cad9f4f03eb75ae99554365ff09f1a5518f8e4159189fb8667a787d09c6ae docs/images/app/en/S06.png
+sha256:57e0453f613ae415d5095ab97c57b34e1bdc408a4cb3ccd9591499ee5d33bae9 docs/images/app/en/S07.png
+sha256:c415da1a539b5c48653bf79f6074955a5b9edd95a67f00b0e0d5307588d1d37b docs/images/app/en/S08.png
+sha256:8a23627e682b2be3852bc7700ca2294fb48d3c7180b6b502bfbf5adc87502ead docs/images/app/en/S09.png
+sha256:5a35d2916e1402ee0799aba39534d04d3c874ad0af7c0625355c25cbe260a1ee docs/images/app/en/S10a.png
+sha256:46d45f691a6473f2e42b4af70b0b8634a133eadc9578360200305e7d0a1acd3b docs/images/app/en/S10b-unknown.png
+sha256:cd4abc3db1aa9beb48b9399388687d96281908e248d0066e4f00d6d9ad26a5d3 docs/images/app/en/S10b.png
+sha256:bac9275d628c9b6bd4ec9a97e6e8700a46ed290fe81221621d26f6d4ab86f8ac docs/images/app/en/S11.png
+sha256:40add6a315573073869a51e14ed712404c4d2dc1e5ab4a735ddc3e54b0ad73be docs/images/app/en/S12.png
+sha256:6745bb53fa62ced58aac397a22631df4f8adad0eb65f975daa13fbde107df7db docs/images/app/en/S13.png
+sha256:4e36d2388908ac0f32bdfabe8f43fdac36da8eddc6460f0431b26130240ddb91 docs/images/app/en/S14.png
+sha256:27b57afdef14726122b87c64259fcd603a30d4d63ac11493aaa5ba706367dcb6 docs/images/app/en/S15.png
+sha256:8e2980b15a864f1970044fdaedd8cd6856970890a641f81ff7293b504f215b5e docs/images/app/en/S16.png
+sha256:3ffae5c4747e2d95eed9a1f04da65669c9ad81173f072c2614d4d15c82073890 docs/images/app/en/S17.png
+sha256:e72c1269dd624809ba736a3e8fa24c3f45c5d5692a07ada577f556a23609c405 docs/images/app/en/S18.png
+sha256:4ba433edc48916bfc0dd9d0c93c93b4668abf936b622da6f8ccb6c1bfeb9b419 docs/images/app/en/S19.png
+sha256:1f397876ac605511ec2bc6b1b88d6f318100414563578e7ae4b778015abc5276 docs/images/app/en/S20.png
+sha256:0737db24df231c746532e48cd031557123ec07e7b6a38fdfa7addda8b3c6e521 docs/images/app/en/S21-data.png
+sha256:022caf83f54dbaaf6acd35ac3b4375075bdd290f8bacdd75b469d57de5bc6a2b docs/images/app/en/S21-data_keychain.png
+sha256:507b1c04931a650781ccfd631aa75323d8a000e3784cb4125f31063b0c070627 docs/images/app/en/S21-setup_full.png
+sha256:de15f95c7f775cf20ccfb27614eaa241a62f3334c67ce48307243607432bf8c3 docs/images/app/en/S21-threema_only.png
+sha256:b8f4e9fda02fba870ab5acacbc1444d97bf01af84b73a5ae31a6936bc957da0a docs/images/app/en/S22.png
+sha256:68c8c58e6b3c03b812576733a1b9a68b3ef7a0b25c555cab95f8611ad23432a1 docs/images/app/en/S23.png
+# END demo screenshots

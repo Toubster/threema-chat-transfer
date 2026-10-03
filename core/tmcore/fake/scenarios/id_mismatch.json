@@ -1,0 +1,16 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "store": {
+   "base": "default",
+   "own": "ZZFIXN99"
+  }
+ },
+ "expect": {
+  "cmd": "backup",
+  "code": "E_THREEMA_ID_MISMATCH"
+ },
+ "expect_screen": "F-THREEMA-ID",
+ "summary": "the Android backup belongs to another Threema ID than Threema on the iPhone"
+}

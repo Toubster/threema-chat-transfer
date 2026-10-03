@@ -1,0 +1,19 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "flow": {
+  "after_postcheck": [
+   "rollback"
+  ],
+  "threema_answer": "problem"
+ },
+ "summary": "S17 'Problem' although every system check is green -> threema_only (R1), reset Threema -> ok"
+}

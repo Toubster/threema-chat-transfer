@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Upstream watch (DESIGN §6.2-§6.4, §12): new iOS builds, new Threema iOS models, new Threema Android backup formats.
+# Opens one issue per finding (deduplicated by title); never changes code, compat lists or releases. The only
+# workflow that reads upstream sources over the network. Triage: docs/MAINTAINER.md §8.
+name: upstream-watch
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"     # Mondays 05:17 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "print the issues instead of creating them"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-watch
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  watch:
+    name: ${{ matrix.what }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    strategy:
+      fail-fast: false
+      matrix:
+        what: [ios-builds, threema-ios, threema-android]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+        with:
+          python-version: "3.13"
+      - name: check ${{ matrix.what }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WHAT: ${{ matrix.what }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          # shellcheck disable=SC2086  # DRY_RUN is empty or one fixed flag
+          python .github/scripts/upstream_watch.py "${WHAT}" ${DRY_RUN}

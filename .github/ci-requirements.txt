@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Python test tools for CI jobs (exact versions). Not part of the shipped bundle; the bundle's runtime wheels are
+# pinned with hashes in core/requirements.lock.
+pytest==9.1.1
+jsonschema==4.26.0
+# synthetic Android fixture media (fixtures/gen_android_backup.py; contract + e2e jobs)
+pillow==12.3.0

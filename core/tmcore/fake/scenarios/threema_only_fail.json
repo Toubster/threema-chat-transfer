@@ -1,0 +1,18 @@
+{
+ "behaviour": {
+  "damage": [
+   "threema_store_corrupt"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "postcheck",
+  "code": "R_OK",
+  "verdict": "threema_only"
+ },
+ "expect_screen": "S21",
+ "summary": "Threema discarded the imported store; everything else is fine -> threema_only (R1 offered)"
+}

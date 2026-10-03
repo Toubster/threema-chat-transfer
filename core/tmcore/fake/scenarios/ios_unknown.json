@@ -1,0 +1,15 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "build": "24B5070a",
+  "encryption": true,
+  "ios_version": "27.1"
+ },
+ "expect": {
+  "cmd": "device-status",
+  "code": "R_OK",
+  "compat": "unknown"
+ },
+ "expect_screen": "F-IOS-UNKNOWN",
+ "summary": "iOS build not verified in the allow-list (beta build): the Android part may run, nothing is transferred"
+}

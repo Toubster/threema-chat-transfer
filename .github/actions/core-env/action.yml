@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: core test environment
+description: >-
+  Python 3.13 for the tmcore tests. Uses the bundled runtime (packaging/fetch-python.sh + build-core.sh: the pinned
+  python-build-standalone with the hash-pinned wheels) when the packaging scripts exist, otherwise actions/setup-python
+  plus core/requirements.lock. Exports PY (interpreter) and PYTHONPATH (test tools only).
+runs:
+  using: composite
+  steps:
+    - id: runtime
+      shell: bash
+      run: .github/scripts/gate.sh "bundled runtime for tests" packaging/fetch-python.sh packaging/build-core.sh
+    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+      with:
+        python-version: "3.13"
+    - shell: bash
+      env:
+        BUNDLED: ${{ steps.runtime.outputs.enabled }}
+      run: .github/scripts/core-env.sh

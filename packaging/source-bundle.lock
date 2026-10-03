@@ -1,0 +1,12 @@
+# source-bundle.lock -- hash-pinned sdists for build/dist/source-bundle.tar.gz (DESIGN §11.1 "Corresponding Source":
+# the sdists of all GPL components, so their source stays available independently of PyPI). Owner: pack.
+# Selected automatically = every GPL-licensed distribution of core/requirements.lock (packaging/licenses.txt);
+# regenerate after a dependency change with
+#   python3 packaging/tools/lock_sdists.py core/requirements.lock packaging/licenses.txt
+# (make-source-bundle.sh refuses a bundle whose GPL set differs from this file). hexdump comes from sdist-vendor.lock.
+# Format: NAME VERSION SHA256 URL
+pymobiledevice3 11.19.4 e07f60504379fe1b254a07138185e564ec1d759ff870df43bff45b4f635a8602 https://files.pythonhosted.org/packages/b6/c4/9843e35b5836df037e2636b2b90b15ed34850dcb608a672ef0212a066017/pymobiledevice3-11.19.4.tar.gz
+ioregistry 0.0.6 d7187ad5f93276f1ca981f72f8bee74f6bef4754d9a058643d0726b611844f32 https://files.pythonhosted.org/packages/b0/97/9ca4605f8850c51c390103d2322df789210769bc6017f1d19c5d2b3bc3f3/ioregistry-0.0.6.tar.gz
+pygnuutils 0.1.1 51ab4f27deb59102b7a04192f7585ff2b3a9de03739982f0b19d3cd4d16bea76 https://files.pythonhosted.org/packages/03/20/6a828fe03d6586241b824ee06c7da854ea351716006a62fd2548eaa5710b/pygnuutils-0.1.1.tar.gz
+parameter-decorators 0.0.2 499ec96e71394705be9e3eeb28542aab4875694042516c31051d5dcb0488028e https://files.pythonhosted.org/packages/40/b9/03b5e409930cb4cff0f25f6f3199145f4319a88d5f9be7ee17882359f72d/parameter_decorators-0.0.2.tar.gz
+pyiosbackup 0.2.4 10b4d2a11c9bedc93a5467cad3addbe18bc2dc434156920e7223226ed4d0beb7 https://files.pythonhosted.org/packages/46/ab/c7c3caf6785ced43d02c8c37be3c84720c40d6a9b237eb2ff560af4114e1/pyiosbackup-0.2.4.tar.gz

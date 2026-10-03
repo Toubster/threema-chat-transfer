@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[project]
+name = "tmcore"
+version = "0.9.0b1"              # engine_version "0.9.0-beta.1" (tmcore/__init__.py); one number for app/core/importer
+description = "Chat Transfer for Threema engine: Threema chat history from an Android backup to an iPhone (protocol v1)"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.13"
+dependencies = []                 # runtime wheels are pinned with hashes in requirements.lock (bundle build)
+
+[project.optional-dependencies]
+dev = ["pytest", "jsonschema"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# ported proof-of-concept modules: behaviour first, annotations follow (CI: mypy --exclude 'tmcore/lib/')
+module = ["tmcore.lib.*"]
+ignore_errors = true

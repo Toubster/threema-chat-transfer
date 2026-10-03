@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "about": "Canary values (DESIGN §9, §10.2). They are fed into the synthetic fixtures and the virtual iPhone. After every fixture E2E a scan looks for each value in all events, reports, logs, session.json/engine.json and the diagnostic report: byte-wise, as UTF-8, UTF-16 and Base64. Allowed hits: the fixture input files and android/missing-senders.json. All values are synthetic.",
+  "threema_id": "ZZCANARY",
+  "contact_first_name": "Kassiopeia",
+  "contact_last_name": "Zzwitscher",
+  "group_name": "Kanarienzucht Zzwitscher",
+  "message_text": "Kanarienmeldung zz-7f3a: Der Zitronenfalter wartet am Gleis 9",
+  "device_name": "ZZ Kanarienphone",
+  "udid_parts": ["00008110", "000CA0A2C0FFEE01"],
+  "udid_note": "join udid_parts with '-' to get the UDID-shaped canary; stored split so the repo never holds a UDID-shaped string",
+  "serial": "ZZKANARSN01X",
+  "email": "kassiopeia.zzwitscher@example.org",
+  "phone": "+41 00 000 00 00",
+  "password": "Kanarien-Passwort zz-7f3a!"
+}

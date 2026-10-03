@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Fehler melden / Bug report
+description: Etwas hat nicht funktioniert. Bitte mit Diagnosebericht. / Something did not work. Please attach the diagnostic report.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Bitte keine persönlichen Daten.** Keine Sicherungen, keine Chat-Screenshots, keine Threema-IDs, Namen,
+        Telefonnummern, E-Mail-Adressen, Gerätenamen oder Seriennummern. Der Diagnosebericht der App enthält nur Codes
+        und Zählungen; er reicht uns.
+
+        **No personal data, please.** No backups, no chat screenshots, no Threema IDs, names, phone numbers, e-mail
+        addresses, device names or serial numbers. The app's diagnostic report contains codes and counts only; that is
+        all we need.
+
+        Sicherheitslücke? Bitte **nicht** hier melden, sondern vertraulich (siehe `SECURITY.md`). /
+        Security problem? Please report it privately, **not** here (see `SECURITY.md`).
+
+        Chat Transfer for Threema ist inoffiziell: Fehler dieser App bitte nur hier melden, nicht beim Threema-Support. /
+        Chat Transfer for Threema is unofficial: please report problems with this app here, not to Threema support.
+  - type: dropdown
+    id: sent
+    attributes:
+      label: Wurde die Übertragung schon gesendet? / Was the transfer already sent?
+      description: Also ob Sie „Jetzt übertragen“ geklickt haben. / That is, whether you clicked "Transfer now".
+      options:
+        - "Nein, vorher angehalten / No, it stopped before"
+        - "Ja / Yes"
+        - "Weiß nicht / Don't know"
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Bildschirm und Code / Screen and code
+      description: Wie in der App angezeigt, z. B. „F-FINDMY, E_GUARD_FINDMY“. / As shown in the app, e.g. "F-FINDMY, E_GUARD_FINDMY".
+      placeholder: S12, E_BACKUP_FAILED
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versionen / Versions
+      description: Version von Chat Transfer for Threema, macOS-Version, iOS-Version mit Build, Threema-Version. / Chat Transfer for Threema version, macOS version, iOS version with build, Threema version.
+      placeholder: "Chat Transfer for Threema 0.9.0 · macOS 15.6 · iOS 27.0 (24A437) · Threema 7.4"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Was ist passiert? / What happened?
+      description: Ihre Schritte und was Sie gesehen haben, ohne persönliche Daten. / Your steps and what you saw, without personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Diagnosebericht / Diagnostic report
+      description: |
+        In der App: „Diagnosebericht speichern“, Vorschau ansehen, Datei hierher ziehen. /
+        In the app: "Save diagnostic report", check the preview, drag the file here.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Datenschutz / Privacy
+      options:
+        - label: Ich habe keine persönlichen Daten angehängt (nur den Diagnosebericht). / I attached no personal data (only the diagnostic report).
+          required: true

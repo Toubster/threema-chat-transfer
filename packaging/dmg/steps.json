@@ -1,0 +1,16 @@
+{
+  "_comment": "Text of the DMG background (DESIGN §14.3 four Gatekeeper steps, §11.3 disclaimer, short form). {App} is replaced at build time. Owner: pack.",
+  "title": {"de": "{App} installieren", "en": "Install {App}"},
+  "arrow_hint": {"de": "in „Programme“ ziehen", "en": "drag to Applications"},
+  "steps": [
+    {"de": "{App} in „Programme“ ziehen", "en": "Drag {App} to Applications"},
+    {"de": "In „Programme“ öffnen → „Fertig“", "en": "Open it there → \"Done\""},
+    {"de": "Systemeinstellungen → Datenschutz & Sicherheit → „Trotzdem öffnen“", "en": "System Settings → Privacy & Security → \"Open Anyway\""},
+    {"de": "Mit „Trotzdem öffnen“ + Passwort bestätigen", "en": "Confirm \"Open Anyway\" + password"}
+  ],
+  "readme_hint": {"de": "Ausführlich: „Zuerst lesen.pdf“", "en": "Details: \"Read me first.pdf\""},
+  "disclaimer": {
+    "de": "Inoffiziell: {App} ist ein unabhängiges Open-Source-Projekt ohne Verbindung zur Threema AG, Apple Inc. oder Google LLC. Threema ist eine Marke der Threema AG; Apple und iPhone sind Marken der Apple Inc.; Android ist eine Marke der Google LLC.",
+    "en": "Unofficial: {App} is an independent open-source project, not affiliated with Threema AG, Apple Inc. or Google LLC. Threema is a trademark of Threema AG; Apple and iPhone are trademarks of Apple Inc.; Android is a trademark of Google LLC."
+  }
+}

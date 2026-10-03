@@ -1,0 +1,27 @@
+{
+  "_comment": "DMG window layout for packaging/make-dmg.sh (dmgbuild). Points; background is drawn at this size (1x) and 2x. Owner: pack.",
+  "window": {
+    "width": 720,
+    "height": 600
+  },
+  "icon_size": 96,
+  "text_size": 13,
+  "positions": {
+    "app": [
+      170,
+      140
+    ],
+    "Applications": [
+      550,
+      140
+    ],
+    "readme_de": [
+      290,
+      478
+    ],
+    "readme_en": [
+      430,
+      478
+    ]
+  }
+}

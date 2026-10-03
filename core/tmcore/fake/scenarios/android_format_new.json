@@ -1,0 +1,15 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "android-normalize",
+  "code": "E_ANDROID_FORMAT_NEW"
+ },
+ "expect_screen": "F-ANDROID-FORMAT",
+ "flow": {
+  "android": "format_new"
+ },
+ "summary": "the Android backup comes from a newer Threema format version than the engine knows"
+}

@@ -1,0 +1,16 @@
+{
+ "behaviour": {
+  "find_my_on": true
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "find_my": "unknown"
+ },
+ "expect": {
+  "cmd": "restore",
+  "code": "E_GUARD_FINDMY"
+ },
+ "expect_screen": "F-FINDMY",
+ "summary": "Find My still on (not readable live): the device refuses the restore with MBError 211 before staging; nothing changed"
+}

@@ -1,0 +1,8 @@
+{"schema": 1, "kind": "threema-ios", "models": [
+  {"id": "V56",
+   "version_hashes_sha256": "6044afb9d60bd24fa364013f9f706162238c6cc2b69502bec45f38287ac8a2c4",
+   "version_identifiers": ["ThremaDataV56"],
+   "momd": "models/V56/ThreemaData.momd", "source_commit": "35b749536bbb", "importer_mapping": "v56",
+   "status": "verified", "app_versions": {"min": "7.4"}, "blocked_app_versions": []}
+ ],
+ "variants_allowed": ["ch.threema.iapp"]}

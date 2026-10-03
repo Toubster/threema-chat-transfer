@@ -1,0 +1,16 @@
+{
+ "behaviour": {
+  "drop_first_backup": true
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "the device drops the first backup session; the engine retries (W_BACKUP_RETRY) and goes on"
+}

@@ -1,0 +1,18 @@
+{
+ "behaviour": {
+  "damage": [
+   "restore_state"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "postcheck",
+  "code": "R_OK",
+  "verdict": "restore_state"
+ },
+ "expect_screen": "S21",
+ "summary": "purplebuddy says 'Restored...' after the restart -> restore_state (R2 + diagnostic report)"
+}

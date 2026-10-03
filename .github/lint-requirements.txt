@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Python linters for the ci.yml "lint" job (exact versions).
+ruff==0.16.9
+mypy==2.3.1

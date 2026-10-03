@@ -1,0 +1,7 @@
+#!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# pre-commit: privacy scan of the staged content (layer 1, plus layer 2 when the local deny list exists).
+# Install once: git config core.hooksPath scripts/hooks
+ROOT="$(git rev-parse --show-toplevel)" || exit 1
+PY="$ROOT/.venv/bin/python"; [ -x "$PY" ] || PY="python3"
+exec "$PY" "$ROOT/scripts/scrub_check.py" --root "$ROOT" --staged

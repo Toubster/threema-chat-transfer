@@ -1,0 +1,9 @@
+{
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "full run with encryption switched on by the tool, verdict ok, cleanup of the work folder"
+}

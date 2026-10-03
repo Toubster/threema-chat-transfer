@@ -1,0 +1,21 @@
+{
+ "behaviour": {
+  "damage": [
+   "setup_reset"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "postcheck",
+  "code": "R_OK",
+  "verdict": "setup_full"
+ },
+ "expect_screen": "S21",
+ "flow": {
+  "buddy_answer": "full_setup"
+ },
+ "summary": "the iPhone asked for language/country after the restart (Setup Assistant reset) -> setup_full (R4)"
+}

@@ -1,0 +1,28 @@
+# local tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# build output
+/build/
+/dist/
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+app/*.xcodeproj/
+app/*.xcworkspace/
+*.dmg
+
+# never in the repo: data files (DESIGN §4.3)
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.zip
+*.db
+*.jsonl.tmp

@@ -1,0 +1,13 @@
+{
+ "device": {
+  "airplane": false,
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "backup",
+  "code": "E_GUARD_AIRPLANE"
+ },
+ "expect_screen": "F-AIRPLANE",
+ "summary": "PRE backup made with airplane mode off -> refused after the backup"
+}

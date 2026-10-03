@@ -1,0 +1,2085 @@
+{
+ "schema": "codes.v1",
+ "protocol": 1,
+ "about": "Code catalog of the tmcore protocol v1 (DESIGN §5.5). Every code: kind, target screen, process exit code, device_modified (no/yes/unknown/dynamic), retryable, needs_new_backup, app actions, the result/note data keys it may carry, and the user texts DE (source, 'Sie') + EN. scripts/gen_codes.py turns this into app/Sources/Engine/Codes.generated.swift and the xcstrings keys code.<CODE>.title|body|action plus action.<id>. Placeholders: {App} = product name; {x_gb} = the app formats the data key x_bytes as GB; every other {key} is a data key or an app-side value ({date}). x-area-tokens: the postcheck result.data.areas[].area tokens (gate sentinels, domains, 'other_*', setup_assistant, threema) with their DE/EN words for {Bereiche} of S21 R2; gen_codes.py turns them into the xcstrings keys area.<token>.",
+ "exit_codes": {
+  "0": "result.ok = true",
+  "1": "refused by a guard or user error; nothing changed on the iPhone",
+  "2": "invocation/program error",
+  "3": "device error; for restore possibly after sending (device_modified tells)",
+  "4": "cancelled (SIGTERM outside critical)"
+ },
+ "actions": {
+  "quit": {
+   "de": "Beenden",
+   "en": "Quit"
+  },
+  "retry": {
+   "de": "Erneut versuchen",
+   "en": "Try again"
+  },
+  "recheck": {
+   "de": "Erneut prüfen",
+   "en": "Check again"
+  },
+  "choose_location": {
+   "de": "Anderen Ort wählen …",
+   "en": "Choose another location …"
+  },
+  "see_versions": {
+   "de": "Neue Versionen ansehen",
+   "en": "See new versions"
+  },
+  "diag_report": {
+   "de": "Diagnosebericht speichern",
+   "en": "Save diagnostic report"
+  },
+  "prepare_android": {
+   "de": "Android-Teil vorbereiten",
+   "en": "Prepare the Android part"
+  },
+  "back_s03": {
+   "de": "Zurück zu „iPhone kurz prüfen“",
+   "en": "Back to “Quick iPhone check”"
+  },
+  "back_s05": {
+   "de": "Andere Sicherung wählen",
+   "en": "Choose another backup"
+  },
+  "back_s07": {
+   "de": "Zurück zu „Threema auf dem iPhone“",
+   "en": "Back to “Threema on the iPhone”"
+  },
+  "new_backup": {
+   "de": "Neue Sicherung",
+   "en": "New backup"
+  },
+  "auto_new_backup": {
+   "de": "Neue Sicherung wird erstellt …",
+   "en": "Making a new backup …"
+  },
+  "help": {
+   "de": "Hilfe",
+   "en": "Help"
+  },
+  "reenter_password": {
+   "de": "Passwort erneut eingeben",
+   "en": "Enter the password again"
+  },
+  "continue_s16": {
+   "de": "Weiter mit „Am iPhone nach dem Neustart“",
+   "en": "Continue with “On the iPhone after the restart”"
+  },
+  "continue": {
+   "de": "Weiter",
+   "en": "Continue"
+  },
+  "back": {
+   "de": "Zurück",
+   "en": "Back"
+  },
+  "set_encryption": {
+   "de": "Passwort festlegen",
+   "en": "Set a password"
+  },
+  "reset_threema": {
+   "de": "Threema zurücksetzen",
+   "en": "Reset Threema"
+  },
+  "none": {
+   "de": "OK",
+   "en": "OK"
+  }
+ },
+ "x-area-tokens": {
+  "watch_pairing": {
+   "de": "Apple-Watch-Kopplung",
+   "en": "Apple Watch pairing"
+  },
+  "preferences": {
+   "de": "Einstellungen",
+   "en": "settings"
+  },
+  "notification_settings": {
+   "de": "Mitteilungen",
+   "en": "notifications"
+  },
+  "privacy_permissions": {
+   "de": "Datenschutz-Freigaben",
+   "en": "privacy permissions"
+  },
+  "springboard": {
+   "de": "Home-Bildschirm",
+   "en": "Home Screen"
+  },
+  "wallpapers": {
+   "de": "Hintergrundbilder",
+   "en": "wallpapers"
+  },
+  "shortcuts": {
+   "de": "Kurzbefehle",
+   "en": "Shortcuts"
+  },
+  "local_photos": {
+   "de": "lokale Fotos",
+   "en": "photos on the iPhone"
+  },
+  "photos_library": {
+   "de": "Fotomediathek",
+   "en": "photo library"
+  },
+  "sms_attachments": {
+   "de": "Anhänge von SMS/iMessage",
+   "en": "SMS/iMessage attachments"
+  },
+  "messages_db": {
+   "de": "SMS/iMessage",
+   "en": "SMS/iMessage"
+  },
+  "keychain": {
+   "de": "gespeicherte Anmeldungen",
+   "en": "saved sign-ins"
+  },
+  "health": {
+   "de": "Health-Daten",
+   "en": "Health data"
+  },
+  "wifi_network": {
+   "de": "WLAN-Netze",
+   "en": "Wi-Fi networks"
+  },
+  "keyboard": {
+   "de": "Tastatur",
+   "en": "keyboard"
+  },
+  "accounts": {
+   "de": "Accounts",
+   "en": "accounts"
+  },
+  "wallet_passes": {
+   "de": "Wallet-Pässe",
+   "en": "Wallet passes"
+  },
+  "call_history": {
+   "de": "Anrufliste",
+   "en": "call history"
+  },
+  "calendar": {
+   "de": "Kalender",
+   "en": "calendar"
+  },
+  "identity_services": {
+   "de": "Anmeldung bei iMessage und FaceTime",
+   "en": "iMessage and FaceTime sign-in"
+  },
+  "home_files": {
+   "de": "weitere Daten des iPhones",
+   "en": "other iPhone data"
+  },
+  "photos_files": {
+   "de": "Fotodateien",
+   "en": "photo files"
+  },
+  "keyboard_files": {
+   "de": "Lernstand der Tastatur",
+   "en": "keyboard learning data"
+  },
+  "other_system": {
+   "de": "weitere Systembereiche",
+   "en": "other system areas"
+  },
+  "other_apps": {
+   "de": "andere Apps",
+   "en": "other apps"
+  },
+  "setup_assistant": {
+   "de": "Ersteinrichtung",
+   "en": "initial setup"
+  },
+  "threema": {
+   "de": "Threema",
+   "en": "Threema"
+  }
+ },
+ "codes": {
+  "E_HOST_MACOS_OLD": {
+   "kind": "error",
+   "screen": "F-HOST-UNSUPPORTED",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "quit"
+   ],
+   "data": [
+    "macos",
+    "arch"
+   ],
+   "strings": {
+    "title": {
+     "de": "Dieser Mac wird nicht unterstützt",
+     "en": "This Mac is not supported"
+    },
+    "body": {
+     "de": "{App} braucht einen Mac mit Apple-Chip und macOS 14 oder neuer.",
+     "en": "{App} needs a Mac with Apple silicon and macOS 14 or later."
+    },
+    "action": {
+     "de": "Beenden",
+     "en": "Quit"
+    }
+   }
+  },
+  "E_HOST_ARCH": {
+   "kind": "error",
+   "screen": "F-HOST-UNSUPPORTED",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "quit"
+   ],
+   "data": [
+    "macos",
+    "arch"
+   ],
+   "strings": {
+    "title": {
+     "de": "Dieser Mac wird nicht unterstützt",
+     "en": "This Mac is not supported"
+    },
+    "body": {
+     "de": "{App} braucht einen Mac mit Apple-Chip und macOS 14 oder neuer.",
+     "en": "{App} needs a Mac with Apple silicon and macOS 14 or later."
+    },
+    "action": {
+     "de": "Beenden",
+     "en": "Quit"
+    }
+   }
+  },
+  "E_HOST_SPACE": {
+   "kind": "error",
+   "screen": "F-HOST-SPACE",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "recheck",
+    "choose_location"
+   ],
+   "data": [
+    "need_bytes",
+    "free_bytes"
+   ],
+   "strings": {
+    "title": {
+     "de": "Zu wenig Speicher auf dem Mac",
+     "en": "Not enough space on this Mac"
+    },
+    "body": {
+     "de": "Benötigt etwa {need_gb} GB, frei sind {free_gb} GB.",
+     "en": "About {need_gb} GB needed, {free_gb} GB free."
+    },
+    "action": {
+     "de": "Erneut prüfen",
+     "en": "Check again"
+    }
+   }
+  },
+  "E_HOST_FS_NOT_APFS": {
+   "kind": "error",
+   "screen": "F-HOST-APFS",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "choose_location"
+   ],
+   "data": [
+    "fs"
+   ],
+   "strings": {
+    "title": {
+     "de": "Dieser Speicherort geht nicht",
+     "en": "This location does not work"
+    },
+    "body": {
+     "de": "Bitte einen Ordner auf einem APFS-Laufwerk wählen, z. B. die interne SSD.",
+     "en": "Please choose a folder on an APFS drive, e.g. the internal SSD."
+    },
+    "action": {
+     "de": "Anderen Ort wählen …",
+     "en": "Choose another location …"
+    }
+   }
+  },
+  "E_HOST_POWER": {
+   "kind": "error",
+   "screen": "F-HOST-POWER",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "recheck"
+   ],
+   "data": [
+    "power"
+   ],
+   "strings": {
+    "title": {
+     "de": "Bitte Netzteil anschließen",
+     "en": "Please connect power"
+    },
+    "body": {
+     "de": "Der Mac darf während der Übertragung nicht ausgehen.",
+     "en": "The Mac must not turn off during the transfer."
+    },
+    "action": {
+     "de": "Erneut prüfen",
+     "en": "Check again"
+    }
+   }
+  },
+  "E_ANDROID_PASSWORD": {
+   "kind": "error",
+   "screen": "S05",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "reenter_password"
+   ],
+   "data": [
+    "ref"
+   ],
+   "strings": {
+    "title": {
+     "de": "Passwort passt nicht",
+     "en": "Wrong password"
+    },
+    "body": {
+     "de": "Das Passwort passt nicht zur Sicherung vom {date}. Achten Sie auf Groß- und Kleinschreibung.",
+     "en": "The password does not match the backup from {date}. Check upper and lower case."
+    },
+    "action": {
+     "de": "Passwort erneut eingeben",
+     "en": "Enter the password again"
+    }
+   }
+  },
+  "E_ANDROID_INCOMPLETE": {
+   "kind": "error",
+   "screen": "S05",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "back_s05"
+   ],
+   "data": [
+    "ref"
+   ],
+   "strings": {
+    "title": {
+     "de": "Datei unvollständig",
+     "en": "Incomplete file"
+    },
+    "body": {
+     "de": "Diese Datei ist unvollständig, die Sicherung wurde abgebrochen. Bitte erstellen Sie auf dem Android-Handy eine neue.",
+     "en": "This file is incomplete; the backup was interrupted. Please create a new one on the Android phone."
+    },
+    "action": {
+     "de": "Andere Sicherung wählen",
+     "en": "Choose another backup"
+    }
+   }
+  },
+  "E_ANDROID_FORMAT_NEW": {
+   "kind": "error",
+   "screen": "F-ANDROID-FORMAT",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "see_versions"
+   ],
+   "data": [
+    "ref",
+    "format_version"
+   ],
+   "strings": {
+    "title": {
+     "de": "Diese Sicherung wird nicht unterstützt",
+     "en": "This backup is not supported"
+    },
+    "body": {
+     "de": "Sie stammt aus einer Threema-Version, die {App} noch nicht kennt (Format {format_version}). Bitte prüfen Sie, ob es eine neuere Version von {App} gibt.",
+     "en": "It comes from a Threema version {App} does not know yet (format {format_version}). Please check for a newer version of {App}."
+    },
+    "action": {
+     "de": "Neue Versionen ansehen",
+     "en": "See new versions"
+    }
+   }
+  },
+  "E_ANDROID_FORMAT_UNVERIFIED": {
+   "kind": "error",
+   "screen": "F-ANDROID-FORMAT",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "see_versions"
+   ],
+   "data": [
+    "ref",
+    "format_version"
+   ],
+   "strings": {
+    "title": {
+     "de": "Diese Sicherung wird nicht unterstützt",
+     "en": "This backup is not supported"
+    },
+    "body": {
+     "de": "Sie stammt aus einer Threema-Version, die {App} noch nicht kennt (Format {format_version}). Bitte prüfen Sie, ob es eine neuere Version von {App} gibt.",
+     "en": "It comes from a Threema version {App} does not know yet (format {format_version}). Please check for a newer version of {App}."
+    },
+    "action": {
+     "de": "Neue Versionen ansehen",
+     "en": "See new versions"
+    }
+   }
+  },
+  "E_ANDROID_NO_TEXT": {
+   "kind": "error",
+   "screen": "S05",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "back_s05"
+   ],
+   "data": [
+    "ref"
+   ],
+   "strings": {
+    "title": {
+     "de": "Keine Chats in dieser Datei",
+     "en": "No chats in this file"
+    },
+    "body": {
+     "de": "In dieser Datei sind keine Chats, nur Medien. Bitte wählen Sie zusätzlich die Sicherung mit den Chats.",
+     "en": "This file contains no chats, only media. Please also choose the backup that contains the chats."
+    },
+    "action": {
+     "de": "Andere Sicherung wählen",
+     "en": "Choose another backup"
+    }
+   }
+  },
+  "E_IMPORT_DUPLICATE_CHAT": {
+   "kind": "error",
+   "screen": "F-IMPORT-DUP",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "chats"
+   ],
+   "strings": {
+    "title": {
+     "de": "Doppelter Chat",
+     "en": "Duplicate chat"
+    },
+    "body": {
+     "de": "Ihre Sicherung enthält zwei Chats mit derselben Person. Das kann {App} noch nicht zusammenführen.",
+     "en": "Your backup contains two chats with the same person. {App} cannot merge them yet."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_DEV_NONE": {
+   "kind": "error",
+   "screen": "S03",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Suche iPhone …",
+     "en": "Looking for your iPhone …"
+    },
+    "body": {
+     "de": "Schließen Sie Ihr iPhone mit dem Kabel an diesen Mac an und entsperren Sie es.",
+     "en": "Connect your iPhone to this Mac with the cable and unlock it."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_LOCKED": {
+   "kind": "error",
+   "screen": "S03",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Bitte iPhone entsperren",
+     "en": "Please unlock your iPhone"
+    },
+    "body": {
+     "de": "Entsperren Sie Ihr iPhone mit Ihrem Code.",
+     "en": "Unlock your iPhone with your passcode."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_UNTRUSTED": {
+   "kind": "error",
+   "screen": "S03",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Bitte am iPhone „Vertrauen“ tippen",
+     "en": "Please tap “Trust” on your iPhone"
+    },
+    "body": {
+     "de": "Erscheint „Diesem Computer vertrauen?“, tippen Sie auf „Vertrauen“ und geben Ihren Code ein.",
+     "en": "If “Trust This Computer?” appears, tap “Trust” and enter your passcode."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_MULTIPLE": {
+   "kind": "error",
+   "screen": "F-DEV-MULTI",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [
+    "count"
+   ],
+   "strings": {
+    "title": {
+     "de": "Mehrere iPhones verbunden",
+     "en": "Several iPhones connected"
+    },
+    "body": {
+     "de": "Bitte nur das iPhone anschließen, das die Chats bekommen soll.",
+     "en": "Please connect only the iPhone that should receive the chats."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_OTHER": {
+   "kind": "error",
+   "screen": "F-DEV-OTHER",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Das ist ein anderes iPhone",
+     "en": "This is a different iPhone"
+    },
+    "body": {
+     "de": "Diese Übertragung gehört zu dem iPhone, mit dem Sie begonnen haben.",
+     "en": "This transfer belongs to the iPhone you started with."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_MANAGED": {
+   "kind": "error",
+   "screen": "F-DEV-MANAGED",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "quit"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Verwaltetes iPhone",
+     "en": "Managed iPhone"
+    },
+    "body": {
+     "de": "Dieses iPhone wird von einer Firma oder Schule verwaltet. Das wird nicht unterstützt.",
+     "en": "This iPhone is managed by a company or school. That is not supported."
+    },
+    "action": {
+     "de": "Beenden",
+     "en": "Quit"
+    }
+   }
+  },
+  "E_DEV_BATTERY": {
+   "kind": "error",
+   "screen": "F-DEV-BATTERY",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [
+    "battery_pct",
+    "charging"
+   ],
+   "strings": {
+    "title": {
+     "de": "iPhone-Akku zu schwach",
+     "en": "iPhone battery too low"
+    },
+    "body": {
+     "de": "Bitte laden (mindestens 50 %).",
+     "en": "Please charge it (at least 50 %)."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_DEV_DISCONNECTED": {
+   "kind": "error",
+   "screen": "F-DEV-DISCONNECTED",
+   "exit": 3,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Verbindung zum iPhone getrennt",
+     "en": "iPhone disconnected"
+    },
+    "body": {
+     "de": "Am iPhone wurde nichts verändert. Kabel prüfen und iPhone entsperren.",
+     "en": "Nothing on the iPhone was changed. Check the cable and unlock the iPhone."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_IOS_UNKNOWN": {
+   "kind": "error",
+   "screen": "F-IOS-UNKNOWN",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "prepare_android",
+    "see_versions"
+   ],
+   "data": [
+    "ios_version",
+    "ios_build"
+   ],
+   "strings": {
+    "title": {
+     "de": "Diese iOS-Version ist noch nicht geprüft",
+     "en": "This iOS version is not tested yet"
+    },
+    "body": {
+     "de": "Diese iOS-Version ({ios_version}, {ios_build}) haben wir noch nicht geprüft. Damit Ihr iPhone sicher bleibt, überträgt {App} damit nichts. Neue iOS-Versionen prüfen wir meist innerhalb von zwei Wochen. Sie können den Android-Teil schon vorbereiten und später hier weitermachen. Bitte installieren Sie bis dahin kein weiteres Update.",
+     "en": "We have not tested this iOS version ({ios_version}, {ios_build}) yet. To keep your iPhone safe, {App} will not transfer anything with it. We usually test new iOS versions within two weeks. You can already prepare the Android part and continue here later. Please do not install another update until then."
+    },
+    "action": {
+     "de": "Android-Teil vorbereiten",
+     "en": "Prepare the Android part"
+    }
+   }
+  },
+  "E_IOS_BLOCKED": {
+   "kind": "error",
+   "screen": "F-IOS-UNKNOWN",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "prepare_android",
+    "see_versions"
+   ],
+   "data": [
+    "ios_version",
+    "ios_build"
+   ],
+   "strings": {
+    "title": {
+     "de": "Diese iOS-Version ist gesperrt",
+     "en": "This iOS version is blocked"
+    },
+    "body": {
+     "de": "Für diese iOS-Version ({ios_version}, {ios_build}) wurde die Freigabe zurückgezogen. Damit Ihr iPhone sicher bleibt, überträgt {App} damit nichts. Bitte warten Sie auf eine neue Version von {App}.",
+     "en": "Support for this iOS version ({ios_version}, {ios_build}) was withdrawn. To keep your iPhone safe, {App} will not transfer anything with it. Please wait for a new version of {App}."
+    },
+    "action": {
+     "de": "Android-Teil vorbereiten",
+     "en": "Prepare the Android part"
+    }
+   }
+  },
+  "E_IOS_CHANGED": {
+   "kind": "error",
+   "screen": "F-IOS-CHANGED",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": true,
+   "actions": [
+    "back_s03"
+   ],
+   "data": [
+    "ios_build"
+   ],
+   "strings": {
+    "title": {
+     "de": "iOS wurde aktualisiert",
+     "en": "iOS was updated"
+    },
+    "body": {
+     "de": "Seit der Sicherung hat sich die iOS-Version geändert. Bitte ab „iPhone kurz prüfen“ neu beginnen.",
+     "en": "The iOS version changed since the backup. Please start again from “Quick iPhone check”."
+    },
+    "action": {
+     "de": "Zurück zu „iPhone kurz prüfen“",
+     "en": "Back to “Quick iPhone check”"
+    }
+   }
+  },
+  "E_THREEMA_MISSING": {
+   "kind": "error",
+   "screen": "F-THREEMA-MISSING",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "back_s07"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Threema fehlt auf dem iPhone",
+     "en": "Threema is missing on the iPhone"
+    },
+    "body": {
+     "de": "Bitte zuerst Threema einrichten.",
+     "en": "Please set up Threema first."
+    },
+    "action": {
+     "de": "Zurück zu „Threema auf dem iPhone“",
+     "en": "Back to “Threema on the iPhone”"
+    }
+   }
+  },
+  "E_THREEMA_VARIANT": {
+   "kind": "error",
+   "screen": "F-THREEMA-VARIANT",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "quit"
+   ],
+   "data": [
+    "variant"
+   ],
+   "strings": {
+    "title": {
+     "de": "Threema Work wird nicht unterstützt",
+     "en": "Threema Work is not supported"
+    },
+    "body": {
+     "de": "{App} unterstützt nur die normale Threema-App.",
+     "en": "{App} supports only the regular Threema app."
+    },
+    "action": {
+     "de": "Beenden",
+     "en": "Quit"
+    }
+   }
+  },
+  "E_THREEMA_NOT_SET_UP": {
+   "kind": "error",
+   "screen": "F-THREEMA-SETUP",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "back_s07"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Threema ist noch nicht fertig eingerichtet",
+     "en": "Threema is not fully set up"
+    },
+    "body": {
+     "de": "Bitte Flugmodus kurz aus, Threema öffnen, bis die Chatliste erscheint, dann neu sichern.",
+     "en": "Please turn airplane mode off briefly, open Threema until the chat list appears, then back up again."
+    },
+    "action": {
+     "de": "Zurück zu „Threema auf dem iPhone“",
+     "en": "Back to “Threema on the iPhone”"
+    }
+   }
+  },
+  "E_THREEMA_RETENTION": {
+   "kind": "error",
+   "screen": "F-THREEMA-RETENTION",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "back_s07"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "„Nachrichten behalten“ ist begrenzt",
+     "en": "“Keep messages” is limited"
+    },
+    "body": {
+     "de": "Sonst löscht Threema alte Nachrichten. Bitte auf „Für immer“ stellen, dann neu sichern.",
+     "en": "Otherwise Threema deletes old messages. Please set it to “Forever”, then back up again."
+    },
+    "action": {
+     "de": "Zurück zu „Threema auf dem iPhone“",
+     "en": "Back to “Threema on the iPhone”"
+    }
+   }
+  },
+  "E_THREEMA_MODEL_UNKNOWN": {
+   "kind": "error",
+   "screen": "F-THREEMA-VERSION",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "see_versions"
+   ],
+   "data": [
+    "app_version"
+   ],
+   "strings": {
+    "title": {
+     "de": "Diese Threema-Version wird noch nicht unterstützt",
+     "en": "This Threema version is not supported yet"
+    },
+    "body": {
+     "de": "Threema {app_version} speichert Daten in einer Form, die {App} noch nicht kennt. Bitte warten Sie auf ein Update von {App}.",
+     "en": "Threema {app_version} stores data in a form {App} does not know yet. Please wait for an update of {App}."
+    },
+    "action": {
+     "de": "Neue Versionen ansehen",
+     "en": "See new versions"
+    }
+   }
+  },
+  "E_THREEMA_ID_MISMATCH": {
+   "kind": "error",
+   "screen": "F-THREEMA-ID",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "back_s05"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Andere Threema-ID",
+     "en": "Different Threema ID"
+    },
+    "body": {
+     "de": "Die Android-Sicherung gehört zu einer anderen Threema-ID als Threema auf diesem iPhone. Haben Sie die richtige Datei gewählt?",
+     "en": "The Android backup belongs to a different Threema ID than Threema on this iPhone. Did you choose the right file?"
+    },
+    "action": {
+     "de": "Andere Sicherung wählen",
+     "en": "Choose another backup"
+    }
+   }
+  },
+  "E_THREEMA_ID_UNREADABLE": {
+   "kind": "error",
+   "screen": "F-THREEMA-ID",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "diag_report",
+    "new_backup"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Threema-ID auf dem iPhone nicht lesbar",
+     "en": "Threema ID on the iPhone not readable"
+    },
+    "body": {
+     "de": "Vor der Übertragung prüft {App}, ob die Android-Sicherung zur Threema-ID auf diesem iPhone gehört. Diese ID liest {App} aus Ihren Gruppen in Threema. Auf diesem iPhone gibt es dafür keine passende Gruppe, zum Beispiel weil Sie noch in keiner Gruppe sind. Am iPhone wurde nichts verändert. So geht es weiter: Legen Sie in Threema auf dem iPhone eine neue Gruppe an, in der nur Sie selbst sind (eine Notizgruppe), und schließen Sie Threema wieder. Der Flugmodus bleibt dabei an. Klicken Sie dann hier auf „Neue Sicherung“.",
+     "en": "Before the transfer, {App} checks that the Android backup belongs to the Threema ID on this iPhone. {App} reads that ID from your groups in Threema, and this iPhone has no suitable group, for example because you are not in any group yet. Nothing on the iPhone was changed. What to do: in Threema on the iPhone, create a new group with only yourself in it (a note group), then close Threema again. Airplane mode stays on. Then click “New backup” here."
+    },
+    "action": {
+     "de": "Neue Sicherung",
+     "en": "New backup"
+    }
+   }
+  },
+  "E_BACKUP_FAILED": {
+   "kind": "error",
+   "screen": "F-BACKUP-FAILED",
+   "exit": 3,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "retry"
+   ],
+   "data": [
+    "attempts"
+   ],
+   "strings": {
+    "title": {
+     "de": "Sicherung hat nicht geklappt",
+     "en": "Backup failed"
+    },
+    "body": {
+     "de": "Am iPhone wurde nichts verändert. Kabel prüfen, iPhone entsperren, erneut versuchen.",
+     "en": "Nothing on the iPhone was changed. Check the cable, unlock the iPhone, try again."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_BACKUP_PASSWORD": {
+   "kind": "error",
+   "screen": "F-PW-WRONG",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "reenter_password"
+   ],
+   "data": [
+    "attempt",
+    "max"
+   ],
+   "strings": {
+    "title": {
+     "de": "Passwort für iPhone-Sicherungen falsch",
+     "en": "Wrong iPhone backup password"
+    },
+    "body": {
+     "de": "Das Passwort für iPhone-Sicherungen auf dem Mac passt nicht zu dieser Sicherung. Eine neue Sicherung ist nicht nötig.",
+     "en": "The password for iPhone backups on the Mac does not match this backup. No new backup is needed."
+    },
+    "action": {
+     "de": "Passwort erneut eingeben",
+     "en": "Enter the password again"
+    }
+   }
+  },
+  "E_BACKUP_ENCRYPTION_OFF": {
+   "kind": "error",
+   "screen": "S10a",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "set_encryption"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Sicherungen sind nicht verschlüsselt",
+     "en": "Backups are not encrypted"
+    },
+    "body": {
+     "de": "Ihr iPhone verschlüsselt Sicherungen auf Computern noch nicht. Für diese Übertragung ist das nötig.",
+     "en": "Your iPhone does not encrypt computer backups yet. This transfer needs it."
+    },
+    "action": {
+     "de": "Passwort festlegen",
+     "en": "Set a password"
+    }
+   }
+  },
+  "E_GUARD_AIRPLANE": {
+   "kind": "error",
+   "screen": "F-AIRPLANE",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "new_backup"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Der Flugmodus war nicht an",
+     "en": "Airplane mode was not on"
+    },
+    "body": {
+     "de": "Die Sicherung entstand mit eingeschaltetem Netz. Bitte Flugmodus einschalten; {App} macht eine neue Sicherung.",
+     "en": "The backup was made while online. Please turn on airplane mode; {App} makes a new backup."
+    },
+    "action": {
+     "de": "Neue Sicherung",
+     "en": "New backup"
+    }
+   }
+  },
+  "E_GUARD_FRESHNESS": {
+   "kind": "error",
+   "screen": "F-FRESHNESS",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "auto_new_backup"
+   ],
+   "data": [
+    "age_min",
+    "limit_min"
+   ],
+   "strings": {
+    "title": {
+     "de": "Die Sicherung ist zu alt",
+     "en": "The backup is too old"
+    },
+    "body": {
+     "de": "Seit der Sicherung sind mehr als 60 Minuten vergangen. {App} macht jetzt eine neue; das iPhone bleibt im Flugmodus.",
+     "en": "More than 60 minutes have passed. {App} makes a new one now; the iPhone stays in airplane mode."
+    },
+    "action": {
+     "de": "Neue Sicherung wird erstellt …",
+     "en": "Making a new backup …"
+    }
+   }
+  },
+  "E_GUARD_DCIM_CHANGED": {
+   "kind": "error",
+   "screen": "F-DCIM",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": true,
+   "actions": [
+    "new_backup"
+   ],
+   "data": [
+    "files"
+   ],
+   "strings": {
+    "title": {
+     "de": "Am iPhone wurden Fotos verändert",
+     "en": "Photos on the iPhone changed"
+    },
+    "body": {
+     "de": "Seit der Sicherung hat sich die Fotomediathek geändert. Damit nichts gelöscht wird, macht {App} eine neue Sicherung. Bitte das iPhone nicht benutzen.",
+     "en": "The photo library changed since the backup. To make sure nothing is deleted, {App} makes a new backup. Please do not use the iPhone."
+    },
+    "action": {
+     "de": "Neue Sicherung",
+     "en": "New backup"
+    }
+   }
+  },
+  "E_GUARD_IPHONE_SPACE": {
+   "kind": "error",
+   "screen": "F-IPHONE-SPACE",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "help"
+   ],
+   "data": [
+    "need_bytes",
+    "free_bytes"
+   ],
+   "strings": {
+    "title": {
+     "de": "Zu wenig Speicher auf dem iPhone",
+     "en": "Not enough space on the iPhone"
+    },
+    "body": {
+     "de": "Benötigt etwa {need_gb} GB, frei {free_gb} GB. Tipp: iCloud-Fotos mit „iPhone-Speicher optimieren“.",
+     "en": "About {need_gb} GB needed, {free_gb} GB free. Tip: iCloud Photos with “Optimize iPhone Storage”."
+    },
+    "action": {
+     "de": "Hilfe",
+     "en": "Help"
+    }
+   }
+  },
+  "E_GUARD_PHOTOS_LIMIT": {
+   "kind": "error",
+   "screen": "F-PHOTOS-LIMIT",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "help"
+   ],
+   "data": [
+    "limit_bytes",
+    "photos_bytes"
+   ],
+   "strings": {
+    "title": {
+     "de": "Zu viele Fotos auf dem iPhone",
+     "en": "Too many photos on the iPhone"
+    },
+    "body": {
+     "de": "Diese Version unterstützt bis {limit_gb} GB lokale Fotos; Ihr iPhone hat {photos_gb} GB. Mit „iPhone-Speicher optimieren“ in iCloud-Fotos geht es eventuell.",
+     "en": "This version supports up to {limit_gb} GB of photos stored on the iPhone; yours has {photos_gb} GB. “Optimize iPhone Storage” in iCloud Photos may help."
+    },
+    "action": {
+     "de": "Hilfe",
+     "en": "Help"
+    }
+   }
+  },
+  "E_GUARD_FINDMY": {
+   "kind": "error",
+   "screen": "F-FINDMY",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry"
+   ],
+   "data": [
+    "source"
+   ],
+   "strings": {
+    "title": {
+     "de": "„Wo ist?“ ist noch an",
+     "en": "Find My is still on"
+    },
+    "body": {
+     "de": "Bitte ausschalten (Schritt „iPhone-Einstellungen“, Punkt 3). Am iPhone wurde nichts verändert.",
+     "en": "Please turn it off (step “iPhone settings”, item 3). Nothing on the iPhone was changed."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   },
+   "data_enums": {
+    "source": [
+     "live",
+     "mberror_211"
+    ]
+   }
+  },
+  "E_GUARD_SET_INTEGRITY": {
+   "kind": "error",
+   "screen": "F-INTERNAL",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "sub"
+   ],
+   "strings": {
+    "title": {
+     "de": "Interner Prüffehler",
+     "en": "Internal check failed"
+    },
+    "body": {
+     "de": "{App} hat ein Problem mit sich selbst gefunden und nichts übertragen.",
+     "en": "{App} found a problem with itself and transferred nothing."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   },
+   "data_enums": {
+    "sub": [
+     "layout",
+     "marker",
+     "source",
+     "plists",
+     "structure",
+     "verify",
+     "unchanged"
+    ]
+   }
+  },
+  "E_GUARD_ROLLBACK_WINDOW": {
+   "kind": "error",
+   "screen": "S21",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "age_min",
+    "limit_min"
+   ],
+   "strings": {
+    "title": {
+     "de": "Zurücksetzen nicht mehr möglich",
+     "en": "Reset no longer possible"
+    },
+    "body": {
+     "de": "Seit der ersten Sicherung sind mehr als 6 Stunden vergangen. {App} setzt Threema deshalb nicht mehr zurück. Der sichere Weg zurück ist Ihre Apple-Sicherung von heute.",
+     "en": "More than 6 hours have passed since the first backup, so {App} no longer resets Threema. The safe way back is today’s Apple backup."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_GUARD_ROLLBACK_NOT_ALLOWED": {
+   "kind": "error",
+   "screen": "S21",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "verdict"
+   ],
+   "strings": {
+    "title": {
+     "de": "Zurücksetzen nicht möglich",
+     "en": "Reset not possible"
+    },
+    "body": {
+     "de": "{App} setzt Threema nur zurück, wenn nach der Übertragung allein Threema betroffen ist. Folgen Sie bitte der Anleitung zu Ihrer Apple-Sicherung.",
+     "en": "{App} only resets Threema when nothing but Threema was affected by the transfer. Please follow the guide for your Apple backup."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_RESTORE_NOT_STARTED": {
+   "kind": "error",
+   "screen": "F-RESTORE-BEFORE",
+   "exit": 3,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry",
+    "diag_report"
+   ],
+   "data": [
+    "reason"
+   ],
+   "strings": {
+    "title": {
+     "de": "Übertragung nicht gestartet",
+     "en": "Transfer did not start"
+    },
+    "body": {
+     "de": "Am iPhone wurde nichts verändert. Grund: {reason}.",
+     "en": "Nothing on the iPhone was changed. Reason: {reason}."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   },
+   "data_enums": {
+    "reason": [
+     "device_refused",
+     "connection",
+     "password",
+     "busy",
+     "other"
+    ]
+   },
+   "enum_strings": {
+    "reason": {
+     "device_refused": {
+      "de": "das iPhone hat die Übertragung abgelehnt",
+      "en": "the iPhone refused the transfer"
+     },
+     "connection": {
+      "de": "die Verbindung wurde getrennt",
+      "en": "the connection was lost"
+     },
+     "password": {
+      "de": "das Passwort für iPhone-Sicherungen wurde nicht angenommen",
+      "en": "the iPhone backup password was not accepted"
+     },
+     "busy": {
+      "de": "das iPhone war beschäftigt",
+      "en": "the iPhone was busy"
+     },
+     "other": {
+      "de": "unbekannter Grund (siehe Diagnosebericht)",
+      "en": "unknown reason (see the diagnostic report)"
+     }
+    }
+   }
+  },
+  "E_RESTORE_INTERRUPTED": {
+   "kind": "error",
+   "screen": "F-RESTORE-MID",
+   "exit": 3,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "retry",
+    "continue_s16"
+   ],
+   "data": [
+    "last_progress"
+   ],
+   "strings": {
+    "title": {
+     "de": "Verbindung während der Übertragung verloren",
+     "en": "Connection lost during the transfer"
+    },
+    "body": {
+     "de": "Solange das iPhone nicht von selbst neu gestartet ist, wurde nichts übernommen. Kabel prüfen. Ist es neu gestartet, weiter mit „Am iPhone nach dem Neustart“.",
+     "en": "As long as the iPhone did not restart by itself, nothing was applied. Check the cable. If it did restart, continue with “On the iPhone after the restart”."
+    },
+    "action": {
+     "de": "Erneut versuchen",
+     "en": "Try again"
+    }
+   }
+  },
+  "E_RESTORE_DEVICE_ERROR": {
+   "kind": "error",
+   "screen": "S16",
+   "exit": 3,
+   "device_modified": "unknown",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "continue_s16"
+   ],
+   "data": [
+    "last_progress"
+   ],
+   "strings": {
+    "title": {
+     "de": "Das iPhone hat einen Fehler gemeldet",
+     "en": "The iPhone reported an error"
+    },
+    "body": {
+     "de": "Die Übertragung wurde möglicherweise schon übernommen. Bitte machen Sie mit der Kontrolle weiter.",
+     "en": "The transfer may already have been applied. Please continue with the check."
+    },
+    "action": {
+     "de": "Weiter mit „Am iPhone nach dem Neustart“",
+     "en": "Continue with “On the iPhone after the restart”"
+    }
+   }
+  },
+  "E_POST_TOO_EARLY": {
+   "kind": "error",
+   "screen": "S18",
+   "exit": 1,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "new_backup"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Kontroll-Sicherung zu früh",
+     "en": "Control backup too early"
+    },
+    "body": {
+     "de": "Diese Sicherung ist älter als die Übertragung. {App} macht jetzt eine neue Kontroll-Sicherung.",
+     "en": "This backup is older than the transfer. {App} makes a new control backup now."
+    },
+    "action": {
+     "de": "Neue Sicherung",
+     "en": "New backup"
+    }
+   }
+  },
+  "E_CANCELLED": {
+   "kind": "error",
+   "screen": "S00",
+   "exit": 4,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [
+    "back"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Abgebrochen",
+     "en": "Cancelled"
+    },
+    "body": {
+     "de": "Am iPhone wurde nichts verändert.",
+     "en": "Nothing on the iPhone was changed."
+    },
+    "action": {
+     "de": "Zurück",
+     "en": "Back"
+    }
+   }
+  },
+  "E_SECRETS_MISSING": {
+   "kind": "error",
+   "screen": "F-INTERNAL",
+   "exit": 2,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "sub",
+    "exc",
+    "where"
+   ],
+   "strings": {
+    "title": {
+     "de": "Interner Prüffehler",
+     "en": "Internal check failed"
+    },
+    "body": {
+     "de": "{App} hat ein Problem mit sich selbst gefunden und nichts übertragen.",
+     "en": "{App} found a problem with itself and transferred nothing."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_PROTOCOL": {
+   "kind": "error",
+   "screen": "F-INTERNAL",
+   "exit": 2,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "sub",
+    "exc",
+    "where"
+   ],
+   "strings": {
+    "title": {
+     "de": "Interner Prüffehler",
+     "en": "Internal check failed"
+    },
+    "body": {
+     "de": "{App} hat ein Problem mit sich selbst gefunden und nichts übertragen.",
+     "en": "{App} found a problem with itself and transferred nothing."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_INTERNAL": {
+   "kind": "error",
+   "screen": "F-INTERNAL",
+   "exit": 2,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "sub",
+    "exc",
+    "where"
+   ],
+   "strings": {
+    "title": {
+     "de": "Interner Prüffehler",
+     "en": "Internal check failed"
+    },
+    "body": {
+     "de": "{App} hat ein Problem mit sich selbst gefunden und nichts übertragen.",
+     "en": "{App} found a problem with itself and transferred nothing."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "E_NETWORK_BLOCKED": {
+   "kind": "error",
+   "screen": "F-INTERNAL",
+   "exit": 2,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "diag_report"
+   ],
+   "data": [
+    "sub",
+    "exc",
+    "where"
+   ],
+   "strings": {
+    "title": {
+     "de": "Interner Prüffehler",
+     "en": "Internal check failed"
+    },
+    "body": {
+     "de": "{App} hat ein Problem mit sich selbst gefunden und nichts übertragen.",
+     "en": "{App} found a problem with itself and transferred nothing."
+    },
+    "action": {
+     "de": "Diagnosebericht speichern",
+     "en": "Save diagnostic report"
+    }
+   }
+  },
+  "R_OK": {
+   "kind": "result",
+   "screen": "",
+   "exit": 0,
+   "device_modified": "dynamic",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "continue"
+   ],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Erledigt",
+     "en": "Done"
+    },
+    "body": {
+     "de": "Dieser Schritt ist abgeschlossen.",
+     "en": "This step is complete."
+    },
+    "action": {
+     "de": "Weiter",
+     "en": "Continue"
+    }
+   }
+  },
+  "R_RESTORE_SENT_LINK_LOST": {
+   "kind": "result",
+   "screen": "S16",
+   "exit": 0,
+   "device_modified": "yes",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [
+    "continue_s16"
+   ],
+   "data": [
+    "last_progress"
+   ],
+   "strings": {
+    "title": {
+     "de": "Übertragung gesendet",
+     "en": "Transfer sent"
+    },
+    "body": {
+     "de": "Das iPhone startet jetzt von selbst neu. Die Verbindung zum Mac wird dabei kurz getrennt. Das ist normal.",
+     "en": "The iPhone is restarting by itself. The connection to the Mac drops briefly. That is normal."
+    },
+    "action": {
+     "de": "Weiter mit „Am iPhone nach dem Neustart“",
+     "en": "Continue with “On the iPhone after the restart”"
+    }
+   }
+  },
+  "W_FILEVAULT_OFF": {
+   "kind": "warning",
+   "screen": "S02",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "FileVault ist aus",
+     "en": "FileVault is off"
+    },
+    "body": {
+     "de": "Ihr Mac ist nicht verschlüsselt. Während des Umzugs liegen lesbare Kopien Ihrer Chats auf dem Mac, bis Sie am Ende aufräumen. Wir empfehlen, FileVault einzuschalten: Systemeinstellungen → Datenschutz & Sicherheit → FileVault.",
+     "en": "Your Mac is not encrypted. During the move, readable copies of your chats are on this Mac until you clean up at the end. We recommend turning on FileVault: System Settings → Privacy & Security → FileVault."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_USB2_SLOW": {
+   "kind": "warning",
+   "screen": "S12",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Langsame Verbindung",
+     "en": "Slow connection"
+    },
+    "body": {
+     "de": "Das Kabel oder der Anschluss ist langsam (USB 2). Die Übertragung dauert dadurch länger.",
+     "en": "The cable or port is slow (USB 2). The transfer will take longer."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_ANDROID_MEDIA_PARTIAL": {
+   "kind": "warning",
+   "screen": "S06",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "media_present",
+    "media_total"
+   ],
+   "strings": {
+    "title": {
+     "de": "Nicht alle Medien vorhanden",
+     "en": "Not all media available"
+    },
+    "body": {
+     "de": "{media_present} von {media_total} Medien sind in der Sicherung; die übrigen erscheinen als Platzhalter.",
+     "en": "{media_present} of {media_total} media are in the backup; the others appear as placeholders."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_OWN_UNSENT_AS_SENT": {
+   "kind": "warning",
+   "screen": "S06",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "own_unsent_as_sent"
+   ],
+   "strings": {
+    "title": {
+     "de": "Nie zugestellte eigene Nachrichten",
+     "en": "Own messages never delivered"
+    },
+    "body": {
+     "de": "Eigene Nachrichten, die auf Android nie zugestellt wurden: {own_unsent_as_sent}. Sie erscheinen auf dem iPhone als gesendet.",
+     "en": "Your messages that were never delivered on Android: {own_unsent_as_sent}. They will appear as sent on the iPhone."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_MISSING_KEY_SENDERS": {
+   "kind": "warning",
+   "screen": "S06",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "missing_key_groups",
+    "missing_key_messages",
+    "missing_key_senders"
+   ],
+   "strings": {
+    "title": {
+     "de": "Absender ohne Kontakt",
+     "en": "Senders without a contact"
+    },
+    "body": {
+     "de": "Einige Gruppennachrichten stammen von Personen, die nie in Ihren Threema-Kontakten waren (Nachrichten: {missing_key_messages}, Personen: {missing_key_senders}, Gruppen: {missing_key_groups}). Damit diese Nachrichten übernommen werden, fügen Sie die Personen gleich in Threema auf dem iPhone als Kontakt hinzu. Wir zeigen Ihnen die Liste.",
+     "en": "Some group messages come from people who were never in your Threema contacts (messages: {missing_key_messages}, people: {missing_key_senders}, groups: {missing_key_groups}). To include these messages, add these people as contacts in Threema on the iPhone in a moment. We will show you the list."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_LOW_HOST_SPACE_MARGIN": {
+   "kind": "warning",
+   "screen": "S02",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "need_bytes",
+    "free_bytes"
+   ],
+   "strings": {
+    "title": {
+     "de": "Wenig Reserve auf dem Mac",
+     "en": "Little room to spare on this Mac"
+    },
+    "body": {
+     "de": "Der Platz reicht, aber knapp: benötigt etwa {need_gb} GB, frei {free_gb} GB.",
+     "en": "There is enough space, but only just: about {need_gb} GB needed, {free_gb} GB free."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_BACKUP_RETRY": {
+   "kind": "warning",
+   "screen": "S12",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "attempt",
+    "max"
+   ],
+   "strings": {
+    "title": {
+     "de": "Neuer Versuch",
+     "en": "Trying again"
+    },
+    "body": {
+     "de": "Die Sicherung wurde nach wenigen Sekunden abgebrochen. {App} startet sie automatisch neu. Das ist normal.",
+     "en": "The backup stopped after a few seconds. {App} restarts it automatically. That is normal."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "W_DEVICE_RETRY": {
+   "kind": "warning",
+   "screen": "S03",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": true,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [
+    "attempt",
+    "max"
+   ],
+   "strings": {
+    "title": {
+     "de": "Neuer Versuch",
+     "en": "Trying again"
+    },
+    "body": {
+     "de": "Das iPhone hat nicht sofort geantwortet. {App} versucht es gleich noch einmal. Das ist normal.",
+     "en": "The iPhone did not answer right away. {App} tries again in a moment. That is normal."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_POSTER_CACHE_REGENERATED": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Uhr-Hintergründe neu erzeugt",
+     "en": "Clock wallpapers rebuilt"
+    },
+    "body": {
+     "de": "Die Uhr-Hintergründe wurden neu erzeugt; das sieht man nicht.",
+     "en": "Clock wallpaper caches were rebuilt; you will not notice."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_SHORTCUTS_CATALOGUE_REGENERATED": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Kurzbefehle-Katalog neu aufgebaut",
+     "en": "Shortcuts catalogue rebuilt"
+    },
+    "body": {
+     "de": "Der Katalog der Kurzbefehle wurde neu aufgebaut; Ihre Kurzbefehle sind da.",
+     "en": "The Shortcuts catalogue was rebuilt; your shortcuts are there."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_CALENDAR_SYNC_TABLES": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Kalender gleicht neu ab",
+     "en": "Calendar syncs again"
+    },
+    "body": {
+     "de": "Der Kalender gleicht sich nach dem Einschalten des Internets neu ab.",
+     "en": "Your calendar syncs again once the internet is back on."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_APPLE_ACCOUNT_RERUN": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Apple Account neu angemeldet",
+     "en": "Apple Account signed in again"
+    },
+    "body": {
+     "de": "Das iPhone hat nach dem Neustart nur die Anmeldung beim Apple Account erneut abgefragt.",
+     "en": "After the restart the iPhone only asked for the Apple Account sign-in again."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_KEYCHAIN_ITEMS_ADDED": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Neue Schlüsselbund-Einträge",
+     "en": "New keychain items"
+    },
+    "body": {
+     "de": "Im Schlüsselbund sind neue Einträge dazugekommen, etwa durch die erneute Anmeldung. Es fehlt nichts.",
+     "en": "New keychain items were added, for example by signing in again. Nothing is missing."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_APPLE_PAY_READD": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Apple Pay",
+     "en": "Apple Pay"
+    },
+    "body": {
+     "de": "Karten in Apple Pay bitte neu hinzufügen.",
+     "en": "Please add your Apple Pay cards again."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  },
+  "N_MAIL_LOCAL_MAY_BE_GONE": {
+   "kind": "note",
+   "screen": "S19",
+   "exit": 0,
+   "device_modified": "no",
+   "retryable": false,
+   "needs_new_backup": false,
+   "actions": [],
+   "data": [],
+   "strings": {
+    "title": {
+     "de": "Lokale Mails prüfen",
+     "en": "Check local mail"
+    },
+    "body": {
+     "de": "Mails, die nur „Auf meinem iPhone“ lagen, prüfen.",
+     "en": "Check mail that was stored only “On My iPhone”."
+    },
+    "action": {
+     "de": "OK",
+     "en": "OK"
+    }
+   }
+  }
+ }
+}

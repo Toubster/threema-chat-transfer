@@ -1,0 +1,16 @@
+{
+ "behaviour": {
+  "dcim_change_before_send": true
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "a photo was taken after the PRE backup -> refused before sending, new backup + prepare, then the transfer"
+}

@@ -1,0 +1,2008 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:threema-chat-transfer:schema:events:v1",
+ "title": "tmcore stdout events, protocol v1",
+ "description": "One JSON object per stdout line (UTF-8, <= 64 KiB, flushed). Producer (tmcore) is strict: only the fields declared here. Consumer (the app) is tolerant: it ignores unknown fields and maps unknown codes to F-INTERNAL. Exactly one 'result' per process, always the last event; 'seq' starts at 1 and has no gaps. DESIGN §5.",
+ "x-protocol": 1,
+ "x-commands": [
+  "version",
+  "selftest",
+  "host-check",
+  "android-inspect",
+  "android-normalize",
+  "device-watch",
+  "device-status",
+  "encryption-enable",
+  "backup",
+  "prepare",
+  "restore",
+  "postcheck",
+  "rollback-threema",
+  "session-status",
+  "diag-report",
+  "cleanup"
+ ],
+ "x-phases": {
+  "version": [],
+  "session-status": [],
+  "device-watch": [],
+  "selftest": [
+   "imports",
+   "bundle",
+   "netguard"
+  ],
+  "host-check": [
+   "checks"
+  ],
+  "android-inspect": [
+   "inspect"
+  ],
+  "android-normalize": [
+   "read",
+   "media",
+   "verify"
+  ],
+  "device-status": [
+   "read"
+  ],
+  "encryption-enable": [
+   "confirm_on_device"
+  ],
+  "backup": [
+   "backup",
+   "checks"
+  ],
+  "prepare": [
+   "extract",
+   "import",
+   "count",
+   "build",
+   "verify"
+  ],
+  "restore": [
+   "guards",
+   "send",
+   "reboot"
+  ],
+  "rollback-threema": [
+   "build",
+   "guards",
+   "send",
+   "reboot"
+  ],
+  "postcheck": [
+   "threema",
+   "compare",
+   "verdict"
+  ],
+  "diag-report": [
+   "collect"
+  ],
+  "cleanup": [
+   "delete"
+  ]
+ },
+ "oneOf": [
+  {
+   "$ref": "#/$defs/hello"
+  },
+  {
+   "$ref": "#/$defs/phaseEvent"
+  },
+  {
+   "$ref": "#/$defs/progress"
+  },
+  {
+   "$ref": "#/$defs/check"
+  },
+  {
+   "$ref": "#/$defs/prompt"
+  },
+  {
+   "$ref": "#/$defs/retry"
+  },
+  {
+   "$ref": "#/$defs/device"
+  },
+  {
+   "$ref": "#/$defs/critical"
+  },
+  {
+   "$ref": "#/$defs/note"
+  },
+  {
+   "$ref": "#/$defs/result"
+  }
+ ],
+ "$defs": {
+  "timestamp": {
+   "type": "string",
+   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+   "description": "RFC 3339, UTC, 'Z' suffix"
+  },
+  "code": {
+   "type": "string",
+   "pattern": "^[EWNR]_[A-Z0-9_]{2,60}$",
+   "description": "a code from core/schema/codes.v1.json"
+  },
+  "hash": {
+   "type": "string",
+   "pattern": "^h:[0-9a-f]{8}$",
+   "description": "'h:' + first 8 hex of HMAC-SHA256(session salt, value). Never the value itself."
+  },
+  "version": {
+   "type": "string",
+   "pattern": "^[0-9]{1,4}(\\.[0-9]{1,4}){0,3}([-+.][0-9A-Za-z.]{1,20})?$"
+  },
+  "command": {
+   "enum": [
+    "version",
+    "selftest",
+    "host-check",
+    "android-inspect",
+    "android-normalize",
+    "device-watch",
+    "device-status",
+    "encryption-enable",
+    "backup",
+    "prepare",
+    "restore",
+    "postcheck",
+    "rollback-threema",
+    "session-status",
+    "diag-report",
+    "cleanup"
+   ]
+  },
+  "phase": {
+   "enum": [
+    "backup",
+    "build",
+    "bundle",
+    "checks",
+    "collect",
+    "compare",
+    "confirm_on_device",
+    "count",
+    "delete",
+    "extract",
+    "guards",
+    "import",
+    "imports",
+    "inspect",
+    "media",
+    "netguard",
+    "read",
+    "reboot",
+    "send",
+    "threema",
+    "verdict",
+    "verify"
+   ]
+  },
+  "safeString": {
+   "description": "The only strings allowed in event data: enums/tokens, codes, hashes, timestamps, public version numbers, iOS builds, device model identifiers, model IDs, screen IDs, session-relative file keys and sha256 digests of public bundle files. No free text, no paths, no names (DESIGN §5.2).",
+   "anyOf": [
+    {
+     "type": "string",
+     "pattern": "^[a-z][a-z0-9_]{0,47}$",
+     "title": "token"
+    },
+    {
+     "type": "string",
+     "pattern": "^[EWNR]_[A-Z0-9_]{2,60}$",
+     "title": "code"
+    },
+    {
+     "type": "string",
+     "pattern": "^h:[0-9a-f]{8}$",
+     "title": "hash"
+    },
+    {
+     "type": "string",
+     "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$",
+     "title": "timestamp"
+    },
+    {
+     "type": "string",
+     "pattern": "^[0-9]{1,4}(\\.[0-9]{1,4}){0,3}([-+.][0-9A-Za-z.]{1,20})?$",
+     "title": "version"
+    },
+    {
+     "type": "string",
+     "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$",
+     "title": "ios_build"
+    },
+    {
+     "type": "string",
+     "pattern": "^(iPhone|iPad|iPod)[0-9]{1,3},[0-9]{1,2}$",
+     "title": "product_type"
+    },
+    {
+     "type": "string",
+     "pattern": "^V[0-9]{1,3}$",
+     "title": "model_id"
+    },
+    {
+     "type": "string",
+     "pattern": "^(S[0-9]{2}[a-z]?|F-[A-Z0-9-]{2,40})$",
+     "title": "screen"
+    },
+    {
+     "type": "string",
+     "pattern": "^(android|ios|work|reports|logs|diag)/[a-z0-9_.-]{1,60}(/[a-z0-9_.-]{1,60}){0,3}$",
+     "title": "session_file"
+    },
+    {
+     "type": "string",
+     "pattern": "^sha256:[0-9a-f]{64}$",
+     "title": "sha256"
+    }
+   ]
+  },
+  "safeValue": {
+   "anyOf": [
+    {
+     "type": [
+      "number",
+      "boolean",
+      "null"
+     ]
+    },
+    {
+     "$ref": "#/$defs/safeString"
+    },
+    {
+     "type": "array",
+     "maxItems": 2000,
+     "items": {
+      "$ref": "#/$defs/safeValue"
+     }
+    },
+    {
+     "$ref": "#/$defs/safeObject"
+    }
+   ]
+  },
+  "safeObject": {
+   "type": "object",
+   "maxProperties": 200,
+   "propertyNames": {
+    "pattern": "^[a-z][a-z0-9_]{0,47}$"
+   },
+   "additionalProperties": {
+    "$ref": "#/$defs/safeValue"
+   }
+  },
+  "envelope": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "enum": [
+      "hello",
+      "phase",
+      "progress",
+      "check",
+      "prompt",
+      "retry",
+      "device",
+      "critical",
+      "note",
+      "result"
+     ]
+    }
+   }
+  },
+  "hello": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "engine_version",
+    "protocol",
+    "pymobiledevice3",
+    "importer_version",
+    "models",
+    "compat_digest"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "hello"
+    },
+    "engine_version": {
+     "$ref": "#/$defs/version"
+    },
+    "protocol": {
+     "const": 1
+    },
+    "pymobiledevice3": {
+     "$ref": "#/$defs/version"
+    },
+    "importer_version": {
+     "$ref": "#/$defs/version"
+    },
+    "models": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "pattern": "^V[0-9]{1,3}$"
+     },
+     "uniqueItems": true
+    },
+    "compat_digest": {
+     "$ref": "#/$defs/hash"
+    },
+    "fake_device": {
+     "type": "boolean",
+     "description": "true when started with --fake-device (CI, demo mode)"
+    }
+   },
+   "additionalProperties": false
+  },
+  "phaseEvent": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "phase",
+    "index",
+    "count"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "phase"
+    },
+    "phase": {
+     "$ref": "#/$defs/phase"
+    },
+    "index": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "count": {
+     "type": "integer",
+     "minimum": 1
+    }
+   },
+   "additionalProperties": false
+  },
+  "progress": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "phase",
+    "pct",
+    "done",
+    "total",
+    "unit"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "progress"
+    },
+    "phase": {
+     "$ref": "#/$defs/phase"
+    },
+    "pct": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "done": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "unit": {
+     "enum": [
+      "bytes",
+      "files",
+      "items"
+     ]
+    },
+    "eta_s": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "additionalProperties": false
+  },
+  "check": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "id",
+    "status"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "check"
+    },
+    "id": {
+     "enum": [
+      "airplane",
+      "android_file",
+      "android_format",
+      "android_media",
+      "android_password",
+      "android_text",
+      "arch",
+      "battery",
+      "buddy_answer",
+      "bundle_hashes",
+      "compat_ios",
+      "coredata_open",
+      "dcim_unchanged",
+      "device",
+      "duplicate_chat",
+      "encryption",
+      "extract",
+      "filevault",
+      "findmy",
+      "free_space",
+      "freeze",
+      "freshness",
+      "fs_apfs",
+      "identity",
+      "import",
+      "ios_unchanged",
+      "iphone_space",
+      "keychain_items",
+      "macos",
+      "managed",
+      "modules",
+      "netguard",
+      "p2_verify_import",
+      "p3_payload",
+      "p4_strict",
+      "password",
+      "photos_limit",
+      "post_after_restore",
+      "power",
+      "purplebuddy",
+      "restoreset",
+      "rollback_allowed",
+      "rollback_window",
+      "set_integrity",
+      "threema_answer",
+      "threema_model",
+      "threema_retention",
+      "threema_setup",
+      "threema_variant",
+      "verify_import",
+      "verify_restoreset"
+     ]
+    },
+    "status": {
+     "enum": [
+      "pass",
+      "warn",
+      "fail",
+      "skip"
+     ]
+    },
+    "code": {
+     "$ref": "#/$defs/code"
+    },
+    "data": {
+     "$ref": "#/$defs/safeObject",
+     "description": "numbers and enums only"
+    }
+   },
+   "additionalProperties": false
+  },
+  "prompt": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "kind",
+    "active"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "prompt"
+    },
+    "kind": {
+     "enum": [
+      "unlock_device",
+      "trust_device",
+      "passcode_on_device",
+      "keep_cable"
+     ]
+    },
+    "active": {
+     "type": "boolean"
+    }
+   },
+   "additionalProperties": false
+  },
+  "retry": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "reason",
+    "attempt",
+    "max",
+    "wait_s"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "retry"
+    },
+    "reason": {
+     "$ref": "#/$defs/code"
+    },
+    "attempt": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "max": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "wait_s": {
+     "type": "number",
+     "minimum": 0
+    }
+   },
+   "additionalProperties": false
+  },
+  "device": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "state"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "device"
+    },
+    "state": {
+     "enum": [
+      "none",
+      "locked",
+      "untrusted",
+      "ready",
+      "multiple",
+      "disconnected"
+     ]
+    },
+    "device": {
+     "$ref": "#/$defs/hash"
+    },
+    "product_type": {
+     "type": "string",
+     "pattern": "^(iPhone|iPad|iPod)[0-9]{1,3},[0-9]{1,2}$"
+    }
+   },
+   "additionalProperties": false
+  },
+  "critical": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "on"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "critical"
+    },
+    "on": {
+     "type": "boolean"
+    }
+   },
+   "additionalProperties": false
+  },
+  "note": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "code"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "note"
+    },
+    "code": {
+     "type": "string",
+     "pattern": "^[WN]_[A-Z0-9_]{2,60}$"
+    },
+    "data": {
+     "$ref": "#/$defs/safeObject"
+    }
+   },
+   "additionalProperties": false
+  },
+  "result_ok_version": {
+   "type": "object",
+   "properties": {
+    "engine_version": {
+     "$ref": "#/$defs/version"
+    },
+    "protocol": {
+     "const": 1
+    },
+    "pymobiledevice3": {
+     "$ref": "#/$defs/version"
+    },
+    "importer_version": {
+     "$ref": "#/$defs/version"
+    },
+    "python": {
+     "$ref": "#/$defs/version"
+    },
+    "models": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "pattern": "^V[0-9]{1,3}$"
+     }
+    },
+    "model_sha256": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "model": {
+        "type": "string",
+        "pattern": "^V[0-9]{1,3}$"
+       },
+       "sha256": {
+        "type": "string",
+        "pattern": "^sha256:[0-9a-f]{64}$"
+       }
+      },
+      "required": [
+       "model",
+       "sha256"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "importer_sha256": {
+     "type": "string",
+     "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "compat_sha256": {
+     "type": "string",
+     "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "compat_digest": {
+     "$ref": "#/$defs/hash"
+    }
+   },
+   "required": [
+    "engine_version",
+    "protocol",
+    "importer_version",
+    "models"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_selftest": {
+   "type": "object",
+   "properties": {
+    "modules_ok": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "bundle_ok": {
+     "type": "boolean"
+    },
+    "netguard": {
+     "type": "boolean"
+    },
+    "python": {
+     "$ref": "#/$defs/version"
+    }
+   },
+   "required": [
+    "modules_ok",
+    "bundle_ok",
+    "netguard"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_host_check": {
+   "type": "object",
+   "properties": {
+    "macos": {
+     "$ref": "#/$defs/version"
+    },
+    "arch": {
+     "enum": [
+      "arm64",
+      "x86_64"
+     ]
+    },
+    "fs": {
+     "enum": [
+      "apfs",
+      "hfs",
+      "exfat",
+      "msdos",
+      "smbfs",
+      "nfs",
+      "other"
+     ]
+    },
+    "free_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "need_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "power": {
+     "enum": [
+      "ac",
+      "battery",
+      "unknown"
+     ]
+    },
+    "battery_pct": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "filevault": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "macos",
+    "arch",
+    "fs",
+    "free_bytes",
+    "power",
+    "filevault"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_android_inspect": {
+   "type": "object",
+   "properties": {
+    "files": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "ref": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "index of the file in argv (user's choice)"
+       },
+       "kind": {
+        "enum": [
+         "full",
+         "text",
+         "media",
+         "incomplete",
+         "unknown"
+        ]
+       },
+       "format_version": {
+        "type": [
+         "integer",
+         "null"
+        ],
+        "minimum": 0
+       },
+       "created_at": {
+        "anyOf": [
+         {
+          "$ref": "#/$defs/timestamp"
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "bytes": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "has_media": {
+        "type": "boolean"
+       },
+       "encrypted": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "ref",
+       "kind",
+       "bytes",
+       "has_media"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "plan": {
+     "enum": [
+      "single",
+      "text_plus_media",
+      "none"
+     ]
+    },
+    "text_ref": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "media_refs": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0
+     }
+    }
+   },
+   "required": [
+    "files",
+    "plan",
+    "media_refs"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_android_normalize": {
+   "type": "object",
+   "properties": {
+    "chats": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "groups": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "messages": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "media_present": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "media_total": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "polls": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "own_unsent_as_sent": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "missing_key_senders": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "missing_key_messages": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "missing_key_groups": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "missing_senders_file": {
+     "type": "string",
+     "pattern": "^android/[a-z0-9_.-]{1,60}$"
+    },
+    "own_id": {
+     "$ref": "#/$defs/hash"
+    }
+   },
+   "required": [
+    "chats",
+    "groups",
+    "messages",
+    "media_present",
+    "media_total",
+    "polls",
+    "own_unsent_as_sent",
+    "missing_key_senders",
+    "missing_key_messages",
+    "own_id"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_device_watch": {
+   "type": "object",
+   "properties": {
+    "events": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "required": [],
+   "additionalProperties": false
+  },
+  "result_ok_device_status": {
+   "type": "object",
+   "properties": {
+    "device": {
+     "$ref": "#/$defs/hash"
+    },
+    "product_type": {
+     "type": "string",
+     "pattern": "^(iPhone|iPad|iPod)[0-9]{1,3},[0-9]{1,2}$"
+    },
+    "ios_version": {
+     "$ref": "#/$defs/version"
+    },
+    "ios_build": {
+     "type": "string",
+     "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$"
+    },
+    "compat": {
+     "enum": [
+      "verified",
+      "static_checked",
+      "unknown",
+      "blocked"
+     ]
+    },
+    "threema": {
+     "type": "object",
+     "properties": {
+      "installed": {
+       "type": "boolean"
+      },
+      "variant": {
+       "enum": [
+        "regular",
+        "work",
+        "onprem",
+        "other",
+        "none"
+       ]
+      },
+      "version": {
+       "anyOf": [
+        {
+         "$ref": "#/$defs/version"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     },
+     "required": [
+      "installed",
+      "variant"
+     ],
+     "additionalProperties": false
+    },
+    "encryption": {
+     "enum": [
+      "on",
+      "off"
+     ]
+    },
+    "find_my": {
+     "enum": [
+      "on",
+      "off",
+      "unknown"
+     ]
+    },
+    "free_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "photos_bytes_estimate": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "battery_pct": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "charging": {
+     "type": "boolean"
+    },
+    "managed": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "device",
+    "product_type",
+    "ios_version",
+    "ios_build",
+    "compat",
+    "threema",
+    "encryption",
+    "find_my",
+    "free_bytes",
+    "battery_pct",
+    "charging",
+    "managed"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_encryption_enable": {
+   "type": "object",
+   "properties": {
+    "encryption": {
+     "const": "on"
+    },
+    "changed": {
+     "type": "boolean",
+     "description": "true: turned on now with new_backup_password; false: it was already on (another password applies, REVIEW B1). Optional (compatible addition)."
+    }
+   },
+   "required": [
+    "encryption"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_backup": {
+   "type": "object",
+   "properties": {
+    "role": {
+     "enum": [
+      "pre",
+      "post"
+     ]
+    },
+    "bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "files": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "password_ok": {
+     "type": "boolean"
+    },
+    "airplane": {
+     "type": "boolean"
+    },
+    "threema": {
+     "type": "object",
+     "properties": {
+      "setup_ok": {
+       "type": "boolean"
+      },
+      "retention_ok": {
+       "type": "boolean"
+      },
+      "model": {
+       "type": "string",
+       "pattern": "^(V[0-9]{1,3}|unknown)$"
+      },
+      "app_version": {
+       "anyOf": [
+        {
+         "$ref": "#/$defs/version"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     },
+     "required": [
+      "setup_ok",
+      "retention_ok",
+      "model"
+     ],
+     "additionalProperties": false
+    },
+    "id_match": {
+     "type": "boolean"
+    },
+    "photos_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "finished_at": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "fresh_until": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ios_build": {
+     "type": "string",
+     "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$"
+    }
+   },
+   "required": [
+    "role",
+    "bytes",
+    "files",
+    "password_ok",
+    "airplane",
+    "threema",
+    "photos_bytes",
+    "finished_at"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_prepare": {
+   "type": "object",
+   "properties": {
+    "messages": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "media": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "skipped": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "payload_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "iphone_required_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "fresh_until": {
+     "$ref": "#/$defs/timestamp"
+    }
+   },
+   "required": [
+    "messages",
+    "media",
+    "skipped",
+    "payload_bytes",
+    "iphone_required_bytes",
+    "fresh_until"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_restore": {
+   "type": "object",
+   "properties": {
+    "last_progress": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "finished_at": {
+     "$ref": "#/$defs/timestamp"
+    }
+   },
+   "required": [
+    "last_progress"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_rollback_threema": {
+   "type": "object",
+   "properties": {
+    "last_progress": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "finished_at": {
+     "$ref": "#/$defs/timestamp"
+    }
+   },
+   "required": [
+    "last_progress"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_postcheck": {
+   "type": "object",
+   "properties": {
+    "verdict": {
+     "enum": [
+      "setup_full",
+      "data_keychain",
+      "data",
+      "threema_only",
+      "restore_state",
+      "needs_answer",
+      "ok_with_notes",
+      "ok"
+     ]
+    },
+    "notes": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "pattern": "^N_[A-Z0-9_]{2,60}$"
+     }
+    },
+    "areas": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "area": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,47}$"
+       },
+       "severity": {
+        "enum": [
+         "alert",
+         "note"
+        ]
+       }
+      },
+      "required": [
+       "area",
+       "severity"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "threema_ok": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "verdict",
+    "notes",
+    "areas",
+    "threema_ok"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_session_status": {
+   "type": "object",
+   "properties": {
+    "phase": {
+     "enum": [
+      "new",
+      "host_checked",
+      "android_done",
+      "iphone_prepared",
+      "pre_backup_done",
+      "prepared",
+      "restore_sent",
+      "restore_finished",
+      "post_backup_done",
+      "postcheck_done",
+      "rollback_sent",
+      "closed"
+     ]
+    },
+    "resume_at": {
+     "type": "string",
+     "pattern": "^(S[0-9]{2}[a-z]?|F-[A-Z0-9-]{2,40})$"
+    },
+    "restore_sent_at": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fresh_until": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "verdict": {
+     "anyOf": [
+      {
+       "enum": [
+        "setup_full",
+        "data_keychain",
+        "data",
+        "threema_only",
+        "restore_state",
+        "needs_answer",
+        "ok_with_notes",
+        "ok"
+       ]
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "phase",
+    "resume_at",
+    "restore_sent_at",
+    "fresh_until",
+    "verdict"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_diag_report": {
+   "type": "object",
+   "properties": {
+    "file": {
+     "type": "string",
+     "pattern": "^diag/[a-z0-9_.-]{1,60}$"
+    },
+    "bytes": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "file",
+    "bytes"
+   ],
+   "additionalProperties": false
+  },
+  "result_ok_cleanup": {
+   "type": "object",
+   "properties": {
+    "freed_bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "what": {
+     "enum": [
+      "work",
+      "pre",
+      "post",
+      "all"
+     ]
+    }
+   },
+   "required": [
+    "freed_bytes"
+   ],
+   "additionalProperties": false
+  },
+  "result": {
+   "type": "object",
+   "required": [
+    "v",
+    "seq",
+    "ts",
+    "cmd",
+    "type",
+    "ok",
+    "code",
+    "retryable",
+    "device_modified",
+    "data"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ts": {
+     "$ref": "#/$defs/timestamp"
+    },
+    "cmd": {
+     "$ref": "#/$defs/command"
+    },
+    "type": {
+     "const": "result"
+    },
+    "ok": {
+     "type": "boolean"
+    },
+    "code": {
+     "type": "string",
+     "pattern": "^[ER]_[A-Z0-9_]{2,60}$"
+    },
+    "retryable": {
+     "type": "boolean"
+    },
+    "device_modified": {
+     "enum": [
+      "no",
+      "yes",
+      "unknown"
+     ]
+    },
+    "data": {
+     "$ref": "#/$defs/safeObject"
+    }
+   },
+   "additionalProperties": false,
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "code": {
+        "pattern": "^R_"
+       }
+      }
+     },
+     "else": {
+      "properties": {
+       "code": {
+        "pattern": "^E_"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "version"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_version"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "selftest"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_selftest"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "host-check"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_host_check"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "android-inspect"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_android_inspect"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "android-normalize"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_android_normalize"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "device-watch"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_device_watch"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "device-status"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_device_status"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "encryption-enable"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_encryption_enable"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "backup"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_backup"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "prepare"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_prepare"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "restore"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_restore"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "postcheck"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_postcheck"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "rollback-threema"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_rollback_threema"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "session-status"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_session_status"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "diag-report"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_diag_report"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "ok": {
+        "const": true
+       },
+       "cmd": {
+        "const": "cleanup"
+       }
+      },
+      "required": [
+       "ok",
+       "cmd"
+      ]
+     },
+     "then": {
+      "properties": {
+       "data": {
+        "$ref": "#/$defs/result_ok_cleanup"
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

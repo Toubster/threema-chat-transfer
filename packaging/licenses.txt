@@ -1,0 +1,53 @@
+# licenses.txt -- curated SPDX expression of every distribution in the bundle (DESIGN §11.1). Owner: pack.
+# Checked by tools/third_party_licenses.py: every bundled dist needs a line here, and every expression must only
+# use identifiers from the ALLOW line (licences that may be combined with and distributed under AGPL-3.0).
+# A new dependency or a licence change fails the build until a maintainer has read the licence and added it here.
+ALLOW MIT MIT-0 BSD-2-Clause BSD-3-Clause Apache-2.0 MPL-2.0 PSF-2.0 GPL-3.0-or-later GPL-3.0-only LicenseRef-Public-Domain Zlib bzip2-1.0.6 0BSD blessing OpenSSL X11 curl
+# dist (canonical name)      SPDX expression
+bpylist2                     MIT
+certifi                      MPL-2.0
+cffi                         MIT-0
+charset-normalizer           MIT
+click                        BSD-3-Clause
+construct                    MIT
+construct-typing             MIT
+cryptography                 Apache-2.0 OR BSD-3-Clause
+hexdump                      LicenseRef-Public-Domain
+hyperframe                   MIT
+idna                         BSD-3-Clause
+ifaddr                       MIT
+ioregistry                   GPL-3.0-or-later
+iphone-backup-decrypt        MIT
+packaging                    Apache-2.0 OR BSD-2-Clause
+parameter-decorators         GPL-3.0-only
+prompt-toolkit               BSD-3-Clause
+psutil                       BSD-3-Clause
+pycparser                    BSD-3-Clause
+pycryptodome                 BSD-2-Clause AND LicenseRef-Public-Domain
+pycryptodomex                BSD-2-Clause AND LicenseRef-Public-Domain
+pygments                     BSD-2-Clause
+pygnuutils                   GPL-3.0-or-later
+pyiosbackup                  GPL-3.0-or-later
+pymobiledevice3              GPL-3.0-or-later
+pyzipper                     MIT AND PSF-2.0
+questionary                  MIT
+requests                     Apache-2.0
+tqdm                         MPL-2.0 AND MIT
+traitlets                    BSD-3-Clause
+typing-extensions            PSF-2.0
+urllib3                      MIT
+wcwidth                      MIT
+xonsh                        BSD-2-Clause
+# python-build-standalone runtime (statically linked into libpython / the interpreter; versions per python.lock)
+@runtime CPython                     PSF-2.0
+@runtime OpenSSL                     Apache-2.0
+@runtime SQLite                      blessing
+@runtime libffi                      MIT
+@runtime zlib                        Zlib
+@runtime xz (liblzma)                0BSD
+@runtime bzip2                       bzip2-1.0.6
+@runtime mpdecimal                   BSD-2-Clause
+@runtime expat                       MIT
+@runtime libedit / ncurses           BSD-3-Clause AND X11
+@runtime libuuid                     BSD-3-Clause
+@runtime HACL* (hashlib)             MIT

@@ -1,0 +1,647 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:threema-chat-transfer:schema:session:v1",
+ "title": "Session folder state files, v1",
+ "description": "<sessions>/<uuid>/session.json (app) and engine.json (engine). Folder: 0700, Time Machine exclusion, .metadata_never_index, APFS. Resume table: DESIGN §8.1.",
+ "oneOf": [
+  {
+   "$ref": "#/$defs/session"
+  },
+  {
+   "$ref": "#/$defs/engine"
+  }
+ ],
+ "$defs": {
+  "session": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "session.v1"
+    },
+    "session_id": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "created_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "updated_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "app_version": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+    },
+    "locale": {
+     "enum": [
+      "de",
+      "en"
+     ]
+    },
+    "sidebar_phase": {
+     "enum": [
+      "start",
+      "android",
+      "prepare_iphone",
+      "transfer",
+      "control",
+      "done"
+     ]
+    },
+    "screen": {
+     "type": "string",
+     "pattern": "^(S[0-9]{2}[a-z]?|F-[A-Z0-9-]{2,40})$"
+    },
+    "workdir_custom": {
+     "type": "boolean",
+     "description": "true when the user chose another APFS location"
+    },
+    "answers": {
+     "type": "object",
+     "properties": {
+      "disclaimer_accepted_at": {
+       "anyOf": [
+        {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "android_files": {
+       "type": "array",
+       "maxItems": 8,
+       "items": {
+        "type": "object",
+        "properties": {
+         "ref": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "path": {
+          "type": "string",
+          "maxLength": 4096,
+          "description": "user-chosen file path; PERSONAL, never leaves the session folder, never in events, reports or the diagnostic report"
+         },
+         "bookmark_b64": {
+          "type": "string",
+          "description": "security-scoped bookmark (optional)"
+         }
+        },
+        "required": [
+         "ref",
+         "path"
+        ],
+        "additionalProperties": false
+       }
+      },
+      "text_only_confirmed": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      },
+      "threema_checklist": {
+       "type": "object",
+       "propertyNames": {
+        "pattern": "^[a-z0-9_]{1,40}$"
+       },
+       "additionalProperties": {
+        "type": "boolean"
+       }
+      },
+      "settings_checklist": {
+       "type": "object",
+       "propertyNames": {
+        "pattern": "^[a-z0-9_]{1,40}$"
+       },
+       "additionalProperties": {
+        "type": "boolean"
+       }
+      },
+      "safety_net": {
+       "enum": [
+        "icloud",
+        "finder",
+        null
+       ]
+      },
+      "safety_net_at": {
+       "anyOf": [
+        {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "encryption_was": {
+       "enum": [
+        "on",
+        "off",
+        null
+       ]
+      },
+      "password_source": {
+       "enum": [
+        "generated",
+        "own",
+        "existing",
+        null
+       ]
+      },
+      "password_in_keychain": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      },
+      "offline_checklist": {
+       "type": "object",
+       "propertyNames": {
+        "pattern": "^[a-z0-9_]{1,40}$"
+       },
+       "additionalProperties": {
+        "type": "boolean"
+       }
+      },
+      "transfer_confirmed_at": {
+       "anyOf": [
+        {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "buddy_answer": {
+       "enum": [
+        "account_only",
+        "full_setup",
+        "none",
+        null
+       ]
+      },
+      "threema_check": {
+       "enum": [
+        "ok",
+        "problem",
+        null
+       ]
+      },
+      "cleanup": {
+       "type": "object",
+       "properties": {
+        "chat_copies_deleted_at": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "safety_copy_keep_until": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       },
+       "required": [],
+       "additionalProperties": false
+      }
+     },
+     "required": [],
+     "additionalProperties": false
+    },
+    "last_error_code": {
+     "anyOf": [
+      {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "schema",
+    "session_id",
+    "created_at",
+    "updated_at",
+    "app_version",
+    "locale",
+    "sidebar_phase",
+    "screen",
+    "answers"
+   ],
+   "additionalProperties": false,
+   "description": "session.json -- written by the app only (DESIGN §5.8)."
+  },
+  "engine": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "engine.v1"
+    },
+    "session_id": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "created_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "updated_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "engine_version": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+    },
+    "phase": {
+     "enum": [
+      "new",
+      "host_checked",
+      "android_done",
+      "iphone_prepared",
+      "pre_backup_done",
+      "prepared",
+      "restore_sent",
+      "restore_finished",
+      "post_backup_done",
+      "postcheck_done",
+      "rollback_sent",
+      "closed"
+     ]
+    },
+    "hash_salt_hex": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$",
+     "description": "session salt for 'h:' hashes; never exported (diag reports re-salt)"
+    },
+    "device": {
+     "anyOf": [
+      {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/hash"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "device_product_type": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^(iPhone|iPad|iPod)[0-9]{1,3},[0-9]{1,2}$"
+    },
+    "android": {
+     "type": "object",
+     "properties": {
+      "normalized_at": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+      },
+      "own_id": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/hash"
+      },
+      "plan": {
+       "enum": [
+        "single",
+        "text_plus_media"
+       ]
+      },
+      "messages": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "media_present": {
+       "type": "integer",
+       "minimum": 0
+      }
+     },
+     "required": [
+      "normalized_at",
+      "own_id"
+     ],
+     "additionalProperties": false
+    },
+    "pre": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "backup_id": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "started_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "finished_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "fresh_until": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "ios_build": {
+         "type": "string",
+         "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$"
+        },
+        "bytes": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "files": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "password_ok": {
+         "type": [
+          "boolean",
+          "null"
+         ]
+        },
+        "frozen": {
+         "type": "boolean"
+        }
+       },
+       "required": [
+        "backup_id",
+        "finished_at"
+       ],
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "post": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "backup_id": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "started_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "finished_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "fresh_until": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "ios_build": {
+         "type": "string",
+         "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$"
+        },
+        "bytes": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "files": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "password_ok": {
+         "type": [
+          "boolean",
+          "null"
+         ]
+        },
+        "frozen": {
+         "type": "boolean"
+        }
+       },
+       "required": [
+        "backup_id",
+        "finished_at"
+       ],
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "prepared": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "finished_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "fresh_until": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "payload_bytes": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "set_sha256": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{64}$"
+        },
+        "pre_backup_id": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+       },
+       "required": [
+        "finished_at",
+        "fresh_until",
+        "pre_backup_id"
+       ],
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "restore": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "kind": {
+         "enum": [
+          "final",
+          "rollback"
+         ]
+        },
+        "pre_backup_id": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "started_at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "sent_at": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "finished_at": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "result_code": {
+         "anyOf": [
+          {
+           "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        },
+        "critical_seen": {
+         "type": "boolean"
+        }
+       },
+       "required": [
+        "kind",
+        "pre_backup_id",
+        "started_at"
+       ],
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "restore_sent_at": {
+     "anyOf": [
+      {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "postcheck": {
+     "anyOf": [
+      {
+       "type": "object",
+       "properties": {
+        "at": {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+        },
+        "verdict": {
+         "enum": [
+          "setup_full",
+          "data_keychain",
+          "data",
+          "threema_only",
+          "restore_state",
+          "needs_answer",
+          "ok_with_notes",
+          "ok"
+         ]
+        },
+        "notes": {
+         "type": "array",
+         "items": {
+          "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+         }
+        }
+       },
+       "required": [
+        "at",
+        "verdict"
+       ],
+       "additionalProperties": false
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rollback_used": {
+     "type": "boolean"
+    },
+    "history": {
+     "type": "array",
+     "maxItems": 500,
+     "items": {
+      "type": "object",
+      "properties": {
+       "cmd": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/command"
+       },
+       "at": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+       },
+       "code": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+       },
+       "exit": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "cmd",
+       "at",
+       "code",
+       "exit"
+      ],
+      "additionalProperties": false
+     }
+    }
+   },
+   "required": [
+    "schema",
+    "session_id",
+    "created_at",
+    "updated_at",
+    "engine_version",
+    "phase",
+    "hash_salt_hex"
+   ],
+   "additionalProperties": false,
+   "description": "engine.json -- written by tmcore only (DESIGN §5.8). The app reads it via session-status."
+  }
+ }
+}

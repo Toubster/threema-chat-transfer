@@ -1,0 +1,330 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:threema-chat-transfer:schema:report:v1",
+ "title": "Reports and diagnostic report, v1",
+ "description": "<session>/reports/*.json (counts only) and the diagnostic report written by diag-report into <session>/diag/. Same privacy rules as events: no names, IDs, paths or free text (DESIGN §5.2, §10). debug.log is never part of a report.",
+ "oneOf": [
+  {
+   "$ref": "#/$defs/report"
+  },
+  {
+   "$ref": "#/$defs/diag"
+  }
+ ],
+ "$defs": {
+  "report": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "report.v1"
+    },
+    "kind": {
+     "enum": [
+      "host",
+      "android_inspect",
+      "android_normalize",
+      "backup",
+      "prepare",
+      "import",
+      "verify_import",
+      "restoreset",
+      "restore",
+      "postcheck",
+      "rollback",
+      "cleanup",
+      "diag"
+     ]
+    },
+    "cmd": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/command"
+    },
+    "created_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "engine_version": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+    },
+    "code": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+    },
+    "counts": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+     },
+     "additionalProperties": {
+      "type": [
+       "integer",
+       "number"
+      ]
+     }
+    },
+    "checks": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,47}$"
+       },
+       "status": {
+        "enum": [
+         "pass",
+         "warn",
+         "fail",
+         "skip"
+        ]
+       },
+       "code": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+       },
+       "data": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/safeObject"
+       }
+      },
+      "required": [
+       "id",
+       "status"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "codes": {
+     "type": "array",
+     "items": {
+      "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+     }
+    },
+    "data": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/safeObject"
+    }
+   },
+   "required": [
+    "schema",
+    "kind",
+    "cmd",
+    "created_at",
+    "engine_version",
+    "code",
+    "counts"
+   ],
+   "additionalProperties": false,
+   "not": {
+    "properties": {
+     "kind": {
+      "const": "diag"
+     }
+    },
+    "required": [
+     "kind"
+    ]
+   }
+  },
+  "diag": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "report.v1"
+    },
+    "kind": {
+     "const": "diag"
+    },
+    "cmd": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/command"
+    },
+    "created_at": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/timestamp"
+    },
+    "engine_version": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+    },
+    "code": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+    },
+    "counts": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+     },
+     "additionalProperties": {
+      "type": [
+       "integer",
+       "number"
+      ]
+     }
+    },
+    "checks": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,47}$"
+       },
+       "status": {
+        "enum": [
+         "pass",
+         "warn",
+         "fail",
+         "skip"
+        ]
+       },
+       "code": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+       },
+       "data": {
+        "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/safeObject"
+       }
+      },
+      "required": [
+       "id",
+       "status"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "codes": {
+     "type": "array",
+     "items": {
+      "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/code"
+     }
+    },
+    "data": {
+     "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/safeObject"
+    },
+    "salt": {
+     "const": "fresh",
+     "description": "hashes in this report are re-salted per report (DESIGN §10.1)"
+    },
+    "versions": {
+     "type": "object",
+     "properties": {
+      "app": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+      },
+      "engine": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+      },
+      "importer": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+      },
+      "pymobiledevice3": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+      },
+      "macos": {
+       "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+      },
+      "ios": {
+       "anyOf": [
+        {
+         "$ref": "urn:threema-chat-transfer:schema:events:v1#/$defs/version"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "ios_build": {
+       "anyOf": [
+        {
+         "type": "string",
+         "pattern": "^[0-9]{2}[A-Z][0-9]{1,5}[a-z]?$"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "product_type": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "threema_model": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     },
+     "required": [
+      "app",
+      "engine"
+     ],
+     "additionalProperties": false
+    },
+    "compat": {
+     "enum": [
+      "verified",
+      "static_checked",
+      "unknown",
+      "blocked",
+      "none"
+     ]
+    },
+    "verdict": {
+     "anyOf": [
+      {
+       "enum": [
+        "setup_full",
+        "data_keychain",
+        "data",
+        "threema_only",
+        "restore_state",
+        "needs_answer",
+        "ok_with_notes",
+        "ok"
+       ]
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "session_phase": {
+     "enum": [
+      "new",
+      "host_checked",
+      "android_done",
+      "iphone_prepared",
+      "pre_backup_done",
+      "prepared",
+      "restore_sent",
+      "restore_finished",
+      "post_backup_done",
+      "postcheck_done",
+      "rollback_sent",
+      "closed"
+     ]
+    },
+    "events": {
+     "type": "array",
+     "maxItems": 20000,
+     "items": {
+      "$ref": "urn:threema-chat-transfer:schema:events:v1"
+     }
+    },
+    "reports": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/report"
+     }
+    }
+   },
+   "required": [
+    "schema",
+    "kind",
+    "created_at",
+    "engine_version",
+    "salt",
+    "versions",
+    "compat",
+    "events"
+   ],
+   "additionalProperties": false
+  }
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "free_bytes": 3000000
+ },
+ "expect": {
+  "cmd": "restore",
+  "code": "E_GUARD_IPHONE_SPACE"
+ },
+ "expect_screen": "F-IPHONE-SPACE",
+ "summary": "not enough free space on the iPhone for the transfer -> refused before sending"
+}

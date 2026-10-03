@@ -1,0 +1,7 @@
+{"schema": 1, "kind": "ios", "builds": [
+  {"build": "24A437", "ios": "27.0", "status": "verified", "verified_on": "2026-10-01",
+   "evidence": "records/ios/24A437.json",
+   "expected_notes": ["N_POSTER_CACHE_REGENERATED", "N_SHORTCUTS_CATALOGUE_REGENERATED", "N_CALENDAR_SYNC_TABLES",
+                      "N_APPLE_ACCOUNT_RERUN"],
+   "min_app": "0.9.0-beta.1", "comment_code": "acceptance_partial"}
+]}

@@ -1,0 +1,18 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true,
+  "store": {
+   "base": "default",
+   "duplicateConversations": [
+    "ZZCANARY"
+   ]
+  }
+ },
+ "expect": {
+  "cmd": "prepare",
+  "code": "E_IMPORT_DUPLICATE_CHAT"
+ },
+ "expect_screen": "F-IMPORT-DUP",
+ "summary": "the iPhone store has two 1:1 chats with the same person; the importer cannot merge them"
+}

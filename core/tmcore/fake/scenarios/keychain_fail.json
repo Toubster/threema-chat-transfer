@@ -1,0 +1,18 @@
+{
+ "behaviour": {
+  "damage": [
+   "keychain_items_lost"
+  ]
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "postcheck",
+  "code": "R_OK",
+  "verdict": "data_keychain"
+ },
+ "expect_screen": "S21",
+ "summary": "keychain items were lost -> data_keychain (R2k)"
+}

@@ -1,0 +1,16 @@
+{
+ "behaviour": {
+  "restore_end": "crash"
+ },
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "summary": "the engine dies while sending (no result after critical on); on relaunch session-status resumes at S16, never 'start over'"
+}

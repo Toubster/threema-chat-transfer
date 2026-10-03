@@ -1,0 +1,16 @@
+{
+ "device": {
+  "backup_password": "canary",
+  "encryption": true
+ },
+ "expect": {
+  "cmd": "cleanup",
+  "code": "R_OK",
+  "verdict": "ok"
+ },
+ "expect_screen": "S20",
+ "flow": {
+  "android": "two_backups"
+ },
+ "summary": "chats from the newest Android backup (no media), media from an older one -> text_plus_media"
+}

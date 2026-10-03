@@ -1,0 +1,320 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# CI (DESIGN §12): scrub · lint · core-tests · contract · importer · e2e-fixture · app · package-smoke.
+# No real data, no device (there is no self-hosted runner; a CI failure can never reach an iPhone), no secrets except
+# the optional scrub deny list. Jobs whose component does not exist yet print a notice and pass; the repository
+# variable CI_STRICT=1 turns a missing component into an error (docs/MAINTAINER.md §2).
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI_STRICT: ${{ vars.CI_STRICT }}
+  XCODE_APP: /Applications/Xcode_16.4.app
+  APP_PROJECT: app/ThreemaChatTransfer.xcodeproj
+  APP_SCHEME: ThreemaChatTransfer
+  PYTHONDONTWRITEBYTECODE: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  scrub:
+    name: scrub (privacy scan)
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+        with:
+          python-version: "3.13"
+      - name: tracked files (layer 1; layer 2 only with the repository secrets, never on fork pull requests)
+        env:
+          SCRUB_DENY_B64: ${{ secrets.SCRUB_DENY_B64 }}
+          SCRUB_KEY: ${{ secrets.SCRUB_KEY }}
+        run: python scripts/scrub_check.py
+      - name: commit messages of this push / pull request
+        env:
+          SCRUB_DENY_B64: ${{ secrets.SCRUB_DENY_B64 }}
+          SCRUB_KEY: ${{ secrets.SCRUB_KEY }}
+          BEFORE: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "${BASE_SHA}" ]; then
+            range="${BASE_SHA}..HEAD"
+          elif [ -n "${BEFORE}" ] && ! [[ "${BEFORE}" =~ ^0+$ ]] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            range="${BEFORE}..HEAD"
+          else
+            range="HEAD"
+          fi
+          python scripts/scrub_check.py --no-files --commits "${range}"
+
+  lint:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+        with:
+          python-version: "3.13"
+      - name: dev tools
+        run: python -m pip install -r .github/ci-requirements.txt -r .github/lint-requirements.txt
+      - name: ruff (syntax errors + pyflakes on every Python file)
+        run: ruff check --select E9,F core scripts devtools fixtures importer model docs/tools .github/scripts
+      - name: ruff (core, full rule set of core/pyproject.toml)
+        if: ${{ vars.CI_STRICT == '1' }}
+        working-directory: core
+        run: ruff check .
+      - name: mypy (tmcore; tmcore/lib joins when its port is finished)
+        working-directory: core
+        run: mypy --python-version 3.13 --ignore-missing-imports --exclude 'tmcore/lib/' tmcore
+      - name: select Xcode
+        run: sudo xcode-select -s "${XCODE_APP}" && xcodebuild -version
+      - name: swift-format (lint)
+        run: |
+          dirs=()
+          for d in app/Sources app/Tests importer/Sources importer/Tests model/tools; do
+            if [ -d "$d" ] && find "$d" -name '*.swift' -print -quit | grep -q .; then dirs+=("$d"); fi
+          done
+          if [ "${#dirs[@]}" -gt 0 ]; then xcrun swift-format lint --recursive "${dirs[@]}"; fi
+      - name: JSON schemas, code catalog, compat lists, mock scenarios
+        run: python scripts/validate_schemas.py
+      - name: generated files up to date
+        run: python scripts/gen_codes.py --check
+      - name: strings DE + EN complete
+        run: python scripts/check_strings.py
+      - name: docs (guide structure, links, screenshot names)
+        run: python docs/tools/check_docs.py
+
+  core-tests:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/core-env
+      - name: pytest (unit, ported + new)
+        working-directory: core
+        run: '"${PY}" -B -m pytest -q tests/unit'
+
+  contract:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/core-env
+      - name: schemas, catalog, strings
+        run: |
+          "${PY}" scripts/validate_schemas.py
+          "${PY}" scripts/check_strings.py
+      - name: media tools of the synthetic Android fixture (ffmpeg; afconvert ships with macOS)
+        run: brew install ffmpeg
+      - name: every command against the contract (stdout schema, exactly one result, exit code, codes in catalog)
+        working-directory: core
+        run: '"${PY}" -B -m pytest -q tests/contract'
+      - id: rec
+        name: scenario drift check available?
+        run: .github/scripts/gate.sh "mock scenario drift check" make:check-scenarios
+      - name: mock scenarios structurally equal to fresh fake-device recordings (DESIGN §13.3)
+        if: steps.rec.outputs.enabled == 'true'
+        run: make check-scenarios PY="${PY}"
+
+  importer:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - id: pkg
+        name: Swift package and check suite available?
+        run: .github/scripts/gate.sh "importer" importer/Package.swift importer/Tests/run_checks.py
+      - name: select Xcode
+        if: steps.pkg.outputs.enabled == 'true'
+        run: sudo xcode-select -s "${XCODE_APP}" && xcodebuild -version
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0  scrub:ok sha1
+        if: steps.pkg.outputs.enabled == 'true'
+        with:
+          python-version: "3.13"
+      - name: fixture tools
+        if: steps.pkg.outputs.enabled == 'true'
+        run: python -m pip install -r .github/importer-requirements.txt
+      - name: build threema-import (release, arm64)
+        if: steps.pkg.outputs.enabled == 'true'
+        run: swift build --package-path importer -c release --arch arm64
+      - name: importer check suite (synthetic fixtures, counts only)
+        if: steps.pkg.outputs.enabled == 'true'
+        run: python importer/Tests/run_checks.py --no-build
+      - id: momd
+        name: model build script available?
+        run: .github/scripts/gate.sh "model verification" model/build-momd.sh
+      - name: compiled model == committed model == compat/threema-ios.json
+        if: steps.momd.outputs.enabled == 'true'
+        run: |
+          sudo xcode-select -s "${XCODE_APP}"
+          model/build-momd.sh --verify
+
+  e2e-fixture:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - id: e2e
+        name: end-to-end tests available?
+        run: .github/scripts/gate.sh "e2e-fixture" "core/tests/e2e/test_*.py"
+      - uses: ./.github/actions/core-env
+        if: steps.e2e.outputs.enabled == 'true'
+      - name: build the importer for the prepare step
+        if: steps.e2e.outputs.enabled == 'true' && hashFiles('importer/Package.swift') != ''
+        run: |
+          sudo xcode-select -s "${XCODE_APP}"
+          swift build --package-path importer -c release --arch arm64
+          bin_dir="$(swift build --package-path importer -c release --arch arm64 --show-bin-path)"
+          echo "TMCORE_IMPORTER=${bin_dir}/threema-import" >> "${GITHUB_ENV}"
+      - name: media tools of the synthetic Android fixture (ffmpeg; afconvert ships with macOS)
+        if: steps.e2e.outputs.enabled == 'true'
+        run: brew install ffmpeg
+      - name: every scenario on the virtual iPhone, network denied by a sandbox profile
+        if: steps.e2e.outputs.enabled == 'true'
+        working-directory: core
+        run: |
+          sandbox-exec -p '(version 1) (allow default) (deny network*)' \
+            "${PY}" -B -m pytest -q tests/e2e --basetemp "${RUNNER_TEMP}/e2e"
+      - id: canary
+        name: canary scan available?
+        if: steps.e2e.outputs.enabled == 'true'
+        run: .github/scripts/gate.sh "canary scan" scripts/canary_scan.py
+      - name: canary scan of every output (events, reports, logs, session files, diagnostic reports; UTF-8/16, Base64)
+        if: steps.e2e.outputs.enabled == 'true' && steps.canary.outputs.enabled == 'true'
+        run: '"${PY}" scripts/canary_scan.py --canaries fixtures/canaries.json "${RUNNER_TEMP}/e2e"'
+      - name: keep the synthetic outputs of a failed run
+        if: failure() && steps.e2e.outputs.enabled == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1  scrub:ok sha1
+        with:
+          name: e2e-synthetic-outputs
+          path: ${{ runner.temp }}/e2e
+          retention-days: 5
+
+  app:
+    name: app (${{ matrix.lang }})
+    runs-on: macos-15
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lang: de
+            region: CH
+          - lang: en
+            region: US
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - id: proj
+        name: Xcode project definition available?
+        run: .github/scripts/gate.sh "app" app/project.yml
+      - name: select Xcode, install XcodeGen
+        if: steps.proj.outputs.enabled == 'true'
+        run: |
+          sudo xcode-select -s "${XCODE_APP}" && xcodebuild -version
+          brew install xcodegen
+          xcodegen --version
+      - name: generate project
+        if: steps.proj.outputs.enabled == 'true'
+        run: xcodegen generate --spec app/project.yml
+      - name: unit, UI (MockEngine, every scenario) and snapshot tests
+        if: steps.proj.outputs.enabled == 'true'
+        env:
+          LANG_CODE: ${{ matrix.lang }}
+          REGION_CODE: ${{ matrix.region }}
+        run: |
+          xcodebuild test \
+            -project "${APP_PROJECT}" -scheme "${APP_SCHEME}" \
+            -destination 'platform=macOS,arch=arm64' \
+            -testLanguage "${LANG_CODE}" -testRegion "${REGION_CODE}" \
+            -resultBundlePath "${RUNNER_TEMP}/app-${LANG_CODE}.xcresult" \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
+      - name: keep the result bundle of a failed run (mock data only)
+        if: failure() && steps.proj.outputs.enabled == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1  scrub:ok sha1
+        with:
+          name: app-${{ matrix.lang }}.xcresult
+          path: ${{ runner.temp }}/app-${{ matrix.lang }}.xcresult
+          retention-days: 5
+
+  package-smoke:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1  scrub:ok sha1
+        with:
+          persist-credentials: false
+      - id: pack
+        name: packaging scripts available?
+        run: |
+          .github/scripts/gate.sh "package-smoke" packaging/fetch-python.sh packaging/build-core.sh \
+            packaging/build-importer.sh packaging/build-app.sh packaging/sign-adhoc.sh packaging/verify-bundle.sh \
+            packaging/make-dmg.sh
+      - name: select Xcode, install XcodeGen
+        if: steps.pack.outputs.enabled == 'true'
+        run: |
+          sudo xcode-select -s "${XCODE_APP}" && xcodebuild -version
+          brew install xcodegen
+      - name: build (runtime, core, importer, app), sign ad-hoc inside-out, DMG
+        if: steps.pack.outputs.enabled == 'true'
+        run: |
+          packaging/fetch-python.sh
+          packaging/build-core.sh
+          packaging/build-importer.sh
+          packaging/build-app.sh
+          packaging/sign-adhoc.sh
+          packaging/make-dmg.sh
+      - name: verify bundle (codesign --strict --deep, licence allow-list, bundle unchanged after a demo run)
+        if: steps.pack.outputs.enabled == 'true'
+        run: packaging/verify-bundle.sh
+      - name: quarantined copy in a path with spaces and umlauts -> tmcore selftest
+        if: steps.pack.outputs.enabled == 'true'
+        run: |
+          app="$(find build/dist -maxdepth 1 -name '*.app' -print -quit)"
+          dest="${RUNNER_TEMP}/Prüfordner mit Leerzeichen äöü"
+          mkdir -p "${dest}"
+          ditto "${app}" "${dest}/Chat Transfer for Threema.app"
+          xattr -w com.apple.quarantine "0081;$(printf '%x' "$(date +%s)");Safari;" "${dest}/Chat Transfer for Threema.app"
+          codesign --verify --strict --deep "${dest}/Chat Transfer for Threema.app"
+          env -i HOME="${RUNNER_TEMP}/home" PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 LANG=C.UTF-8 TMCORE_PROTOCOL=1 \
+            TMCORE_RESOURCES="${dest}/Chat Transfer for Threema.app/Contents/Resources" \
+            "${dest}/Chat Transfer for Threema.app/Contents/Resources/core/python/bin/python3" -I -B -m tmcore selftest \
+            > "${RUNNER_TEMP}/selftest.jsonl"
+          tail -n 1 "${RUNNER_TEMP}/selftest.jsonl" \
+            | python3 -c 'import json,sys; r=json.load(sys.stdin); assert r["type"]=="result" and r["ok"] is True, r'
+      - name: size budget (app <= 200 MB, DMG <= 90 MB)
+        if: steps.pack.outputs.enabled == 'true'
+        run: |
+          app="$(find build/dist -maxdepth 1 -name '*.app' -print -quit)"
+          dmg="$(find build/dist -maxdepth 1 -name '*.dmg' -print -quit)"
+          app_mb=$(du -sm "${app}" | cut -f1)
+          dmg_mb=$(( $(stat -f %z "${dmg}") / 1048576 ))
+          echo "app ${app_mb} MB, dmg ${dmg_mb} MB"
+          [ "${app_mb}" -le 200 ] && [ "${dmg_mb}" -le 90 ]
