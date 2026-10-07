@@ -157,7 +157,7 @@ def check_links(p: Problems) -> int:
                     continue
                 n += 1
                 path_part, _, frag = target.partition("#")
-                if path_part.startswith("../../releases"):   # GitHub UI route from the repository root
+                if path_part.startswith(("../../releases", "../../attestations")):   # GitHub UI routes from the repo root
                     continue
                 dest = (f.parent / path_part).resolve() if path_part else f
                 if "/images/" in target and target.endswith(".png"):
