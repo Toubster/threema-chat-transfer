@@ -42,7 +42,7 @@ codesign --force --sign - --timestamp=none "$BUILD/stage/Resources/bin/threema-i
   || die "threema-import does not run after the rpath change"
 if grep -q -F "$REPO" "$BUILD/stage/Resources/bin/threema-import" \
    || grep -q -F "Xcode.app/" "$BUILD/stage/Resources/bin/threema-import" \
-   || grep -q -F "$HOME" "$BUILD/stage/Resources/bin/threema-import"; then
+   || { [ "${GITHUB_ACTIONS:-}" != true ] && grep -q -F "$HOME" "$BUILD/stage/Resources/bin/threema-import"; }; then
   die "threema-import still contains a build path"
 fi
 log "threema-import $got (arm64, macOS >= $minos) -> build/stage/Resources/bin/"

@@ -53,7 +53,9 @@ def _scutil(key: str) -> str:
 def build_machine_needles() -> list[bytes]:
     needles: set[str] = set()
     home = os.path.expanduser("~")
-    if home not in ("/", "/var/empty") and len(home) > 6:
+    # on GitHub Actions the home folder is the generic, public runner home folder, which upstream wheels built on GitHub
+    # runners embed themselves; there only the checkout path (REPO) identifies this build
+    if home not in ("/", "/var/empty") and len(home) > 6 and os.environ.get("GITHUB_ACTIONS") != "true":
         needles.add(home.rstrip("/") + "/")
     needles.add(str(REPO) + "/")
     try:

@@ -80,7 +80,13 @@ forbidden="$(find "$APP" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*
 [ -z "$forbidden" ] && ok "no data files, installers, tests or writable files" \
   || { bad "forbidden content:"; echo "$forbidden" | sed "s#^$APP/#     #" >&2; }
 # no build-machine path in any file (DESIGN §10.3 "Home-Pfade"): .pyc co_filename, debug stabs, #file literals
-leak="$( (grep -rl -F -e "$REPO" -e "$HOME/" "$APP" 2>/dev/null || true) | head -n 5)"
+# on GitHub Actions HOME is the generic runner home folder, which upstream wheels built on GitHub runners embed themselves;
+# there only the checkout path is a leak of this build
+if [ "${GITHUB_ACTIONS:-}" = true ]; then
+  leak="$( (grep -rl -F -e "$REPO" "$APP" 2>/dev/null || true) | head -n 5)"
+else
+  leak="$( (grep -rl -F -e "$REPO" -e "$HOME/" "$APP" 2>/dev/null || true) | head -n 5)"
+fi
 [ -z "$leak" ] && ok "no build path or home folder in any file" \
   || { bad "build path in:"; echo "$leak" | sort -u | sed "s#^$APP/#     #" >&2; }
 # login, full name and host names of this Mac; the repository account only inside repository links (bundle id!)

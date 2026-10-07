@@ -108,7 +108,11 @@ log "thinned $thinned universal binaries to arm64"
 # the import test left behind; the import system fixes co_filename up at load time anyway
 "$BPY" -I -m compileall -q -f -j 0 --invalidation-mode unchecked-hash -s "$STAGE" -p "/Chat Transfer for Threema.app/Contents/Resources" \
   "$PY/lib/python$PY_MINOR" "$CORE/tmcore" >/dev/null || die "compileall failed"
-if grep -rlq -F "$BUILD" "$CORE" 2>/dev/null || grep -rlq -F "$HOME" "$CORE" 2>/dev/null; then
+# HOME is checked only on a real build Mac: on GitHub Actions it is the generic, public runner home folder, and upstream
+# wheels built by cibuildwheel on GitHub runners embed exactly that prefix in their own compiled files (not our build).
+# The build folder itself (inside the checkout) is checked everywhere.
+if grep -rlq -F "$BUILD" "$CORE" 2>/dev/null \
+   || { [ "${GITHUB_ACTIONS:-}" != true ] && grep -rlq -F "$HOME" "$CORE" 2>/dev/null; }; then
   die "a staged core file still contains a build path"
 fi
 
