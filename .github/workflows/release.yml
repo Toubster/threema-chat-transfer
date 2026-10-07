@@ -77,7 +77,7 @@ jobs:
           {
             echo
             echo "Download: \`threema-chat-transfer-${version}.dmg\`. Verify with \`SHA256SUMS\` (\`shasum -a 256 -c SHA256SUMS\`) and the"
-            echo "build provenance attestation (\`gh attestation verify threema-chat-transfer-${version}.dmg --repo ${GITHUB_REPOSITORY}\`)."
+            echo "build provenance attestation: https://github.com/${GITHUB_REPOSITORY}/attestations"
             echo "First start: see \"Open Anyway\" in the README."
           } >> "${RUNNER_TEMP}/notes.md"
           test -s "${RUNNER_TEMP}/notes.md"
