@@ -79,8 +79,9 @@ this way: [docs/RESTORE-MECHANISM.md](docs/RESTORE-MECHANISM.md).
 ## Download
 
 Releases appear on the [Releases page](../../releases) as `threema-chat-transfer-X.Y.Z.dmg`, together with
-`SHA256SUMS` (checksums). Versions 0.9.x are betas (see the box at the top); a minisign signature and a build provenance
-attestation are planned from version 1.0.
+`SHA256SUMS` (checksums). Every release file is built by GitHub Actions from this repository and carries a build
+provenance attestation ([Attestations](../../attestations)). Versions 0.9.x are betas (see the box at the top); a
+minisign signature is planned from version 1.0.
 
 ## Opening the app the first time ("Open Anyway")
 

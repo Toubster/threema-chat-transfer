@@ -670,8 +670,9 @@ cd ~/Downloads
 shasum -a 256 -c SHA256SUMS --ignore-missing
 ```
 
-The 0.9.x betas are built locally and only come with these checksums. A minisign signature (`SHA256SUMS.minisig`) and a
-build provenance attestation from GitHub Actions (`gh attestation verify …`) are planned from version 1.0.
+Every release file is built by GitHub Actions from the repository and has a build provenance attestation. Check it with
+the GitHub CLI: `gh attestation verify threema-chat-transfer-X.Y.Z.dmg --owner <account from the repository URL>`.
+A minisign signature (`SHA256SUMS.minisig`) is planned from version 1.0.
 
 **Build from source.** Requirements: Mac with Apple silicon, Xcode, Python 3.13. Then `git clone`, `make app`
 (see `README.md` in the repository). The app built this way is signed ad-hoc on your Mac.

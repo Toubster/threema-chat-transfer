@@ -83,8 +83,9 @@ Wiederherstellung funktioniert und warum sie so gebaut ist (auf Englisch):
 ## Download
 
 Versionen erscheinen auf der [Release-Seite](../../releases) als `threema-chat-transfer-X.Y.Z.dmg`, zusammen mit
-`SHA256SUMS` (Prüfsummen). Versionen 0.9.x sind Betas (siehe Kasten oben); minisign-Signatur und
-Herkunftsbestätigung des Builds sind ab Version 1.0 geplant.
+`SHA256SUMS` (Prüfsummen). Alle Release-Dateien werden von GitHub Actions aus diesem Repository gebaut und tragen
+eine Herkunftsbestätigung ([Attestations](../../attestations)). Versionen 0.9.x sind Betas (siehe Kasten oben); eine
+minisign-Signatur ist ab Version 1.0 geplant.
 
 ## Die App zum ersten Mal öffnen („Trotzdem öffnen“)
 
