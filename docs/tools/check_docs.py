@@ -27,13 +27,15 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 LIST = REPO / "docs" / "images" / "screenshots.json"
 GUIDES = {lang: REPO / "docs" / "user" / lang / "README.md" for lang in ("de", "en")}
-# DESIGN §13.3 scenario names (mock and fake device use the same names) + wrong_android_password (app/Tests/Scenarios)
+# DESIGN §13.3 scenario names (mock and fake device use the same names) + wrong_android_password and
+# threema_problem_reported (app/Tests/Scenarios)
 SCENARIOS = {
     "happy", "happy_with_notes", "first_backup_dropped", "find_my_on", "airplane_off", "freshness_expired",
     "dcim_changed", "ios_unknown", "threema_missing", "threema_model_unknown", "id_mismatch", "wrong_backup_password",
     "iphone_space_low", "photos_limit", "link_lost_after_send", "app_crash_after_send", "threema_only_fail",
     "data_fail", "keychain_fail", "setup_full", "restore_state", "rollback_threema_ok", "android_two_backups",
     "android_incomplete", "android_format_new", "duplicate_chat", "wrong_android_password",
+    "threema_problem_reported",
 }
 RX_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)\)")
 RX_LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)\)")
@@ -157,6 +159,7 @@ def check_links(p: Problems) -> int:
                     continue
                 n += 1
                 path_part, _, frag = target.partition("#")
+                path_part = path_part.partition("?")[0]          # "?raw=true": GitHub serves the file itself
                 if path_part.startswith(("../../releases", "../../attestations")):   # GitHub UI routes from the repo root
                     continue
                 dest = (f.parent / path_part).resolve() if path_part else f

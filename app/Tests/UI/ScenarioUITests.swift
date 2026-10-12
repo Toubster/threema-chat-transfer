@@ -32,6 +32,7 @@ final class ScenarioUITests: XCTestCase {
         "threema_missing",
         "threema_model_unknown",
         "threema_only_fail",
+        "threema_problem_reported",
         "wrong_android_password",
         "wrong_backup_password",
     ]
@@ -95,6 +96,8 @@ final class ScenarioUITests: XCTestCase {
     func testThreemaModelUnknownEN() throws { try run("threema_model_unknown", "en") }
     func testThreemaOnlyFailDE() throws { try run("threema_only_fail", "de") }
     func testThreemaOnlyFailEN() throws { try run("threema_only_fail", "en") }
+    func testThreemaProblemReportedDE() throws { try run("threema_problem_reported", "de") }
+    func testThreemaProblemReportedEN() throws { try run("threema_problem_reported", "en") }
     func testWrongAndroidPasswordDE() throws { try run("wrong_android_password", "de") }
     func testWrongAndroidPasswordEN() throws { try run("wrong_android_password", "en") }
     func testWrongBackupPasswordDE() throws { try run("wrong_backup_password", "de") }

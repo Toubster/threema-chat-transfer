@@ -232,7 +232,9 @@ def main():
         return hashlib.sha256(b).hexdigest()
 
     exp_file_with_data = 0
-    exp_generated_thumbs = 0
+    # msg_id hex -> "android" (thumb_path given) | "generated" (the importer makes it from the media): every file
+    # message that must end up with a thumbnail. The video one only exists with ffmpeg, so no fixed count.
+    exp_thumbs = {}
 
     # ---------------- 1:1 chat with A ----------------
     t_first = fx.add(chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="text", text="Hello from A")
@@ -254,19 +256,21 @@ def main():
 
     # image incoming with media + android thumbnail
     u = new_uid()
-    fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/jpeg",
-           file_name="img.jpg", file_size=len(img_in) + 7, file_render=1, file_caption="caption in",
-           file_blob_id=rbytes(16), file_key=rbytes(32), file_thumb_mime="image/jpeg",
-           file_meta_json=json.dumps({"w": 640.0, "h": 480}), media_path=fx.put_media(u, img_in),
-           media_sha256=sha(img_in), thumb_path=fx.put_media(u, thumb_android, "thumbs"))
+    r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/jpeg",
+               file_name="img.jpg", file_size=len(img_in) + 7, file_render=1, file_caption="caption in",
+               file_blob_id=rbytes(16), file_key=rbytes(32), file_thumb_mime="image/jpeg",
+               file_meta_json=json.dumps({"w": 640.0, "h": 480}), media_path=fx.put_media(u, img_in),
+               media_sha256=sha(img_in), thumb_path=fx.put_media(u, thumb_android, "thumbs"))
     exp_file_with_data += 1
+    exp_thumbs[r["msg_id"].hex()] = "android"
     # big image outgoing, no blob id/key (android local-only outgoing), no thumbnail -> generated
     u = new_uid()
-    fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=1, kind="file", file_mime="image/jpeg",
-           file_name=None, file_size=len(img_big), file_render=1, state="READ", read_ms=ts(0) + 3000,
-           file_meta_json=json.dumps({"w": 700, "h": 700}), media_path=fx.put_media(u, img_big), media_sha256=sha(img_big))
+    r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=1, kind="file", file_mime="image/jpeg",
+               file_name=None, file_size=len(img_big), file_render=1, state="READ", read_ms=ts(0) + 3000,
+               file_meta_json=json.dumps({"w": 700, "h": 700}), media_path=fx.put_media(u, img_big),
+               media_sha256=sha(img_big))
     exp_file_with_data += 1
-    exp_generated_thumbs += 1
+    exp_thumbs[r["msg_id"].hex()] = "generated"
     # voice message incoming (consumed)
     if have_audio:
         u = new_uid()
@@ -286,25 +290,28 @@ def main():
     if have_video:
         u = new_uid()
         data = open(tmp_video, "rb").read()
-        fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="video/mp4",
-               file_name="clip.mp4", file_size=len(data), file_render=1, file_blob_id=rbytes(16), file_key=rbytes(32),
-               file_meta_json=json.dumps({"d": 3}), media_path=fx.put_media(u, data), media_sha256=sha(data))
+        r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file",
+                   file_mime="video/mp4", file_name="clip.mp4", file_size=len(data), file_render=1,
+                   file_blob_id=rbytes(16), file_key=rbytes(32), file_meta_json=json.dumps({"d": 3}),
+                   media_path=fx.put_media(u, data), media_sha256=sha(data))
         exp_file_with_data += 1
-        exp_generated_thumbs += 1
+        exp_thumbs[r["msg_id"].hex()] = "generated"
     # sticker (png, render 2)
     u = new_uid()
-    fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/png",
-           file_size=len(sticker), file_render=2, file_blob_id=rbytes(16), file_key=rbytes(32),
-           file_meta_json=json.dumps({"w": 128, "h": 128}), media_path=fx.put_media(u, sticker), media_sha256=sha(sticker))
+    r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/png",
+               file_size=len(sticker), file_render=2, file_blob_id=rbytes(16), file_key=rbytes(32),
+               file_meta_json=json.dumps({"w": 128, "h": 128}), media_path=fx.put_media(u, sticker),
+               media_sha256=sha(sticker))
     exp_file_with_data += 1
-    exp_generated_thumbs += 1
+    exp_thumbs[r["msg_id"].hex()] = "generated"
     # gif (render 1, animated)
     u = new_uid()
-    fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=1, kind="file", file_mime="image/gif",
-           file_size=len(gif), file_render=1, state="READ", file_meta_json=json.dumps({"a": True, "w": 64, "h": 48}),
-           media_path=fx.put_media(u, gif), media_sha256=sha(gif))
+    r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=1, kind="file", file_mime="image/gif",
+               file_size=len(gif), file_render=1, state="READ",
+               file_meta_json=json.dumps({"a": True, "w": 64, "h": 48}), media_path=fx.put_media(u, gif),
+               media_sha256=sha(gif))
     exp_file_with_data += 1
-    exp_generated_thumbs += 1
+    exp_thumbs[r["msg_id"].hex()] = "generated"
     # pdf file (render 0), no thumbnail expected
     u = new_uid()
     fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="application/pdf",
@@ -318,9 +325,10 @@ def main():
            media_path=fx.put_media(u, img_in), media_sha256="00" * 32)
     # missing media incoming (newer than media backup) with android thumbnail only
     u = new_uid()
-    fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/jpeg",
-           file_name="missing.jpg", file_size=12345, file_render=1, file_blob_id=rbytes(16), file_key=rbytes(32),
-           file_meta_json=json.dumps({"w": 10, "h": 10}), thumb_path=fx.put_media(u, thumb_android, "thumbs"))
+    r = fx.add(uid=u, chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=0, kind="file", file_mime="image/jpeg",
+               file_name="missing.jpg", file_size=12345, file_render=1, file_blob_id=rbytes(16), file_key=rbytes(32),
+               file_meta_json=json.dumps({"w": 10, "h": 10}), thumb_path=fx.put_media(u, thumb_android, "thumbs"))
+    exp_thumbs[r["msg_id"].hex()] = "android"
     # missing media outgoing, nothing at all
     fx.add(chat_kind="contact", chat_key=A, api_id=rbytes(8), is_own=1, kind="file", file_mime="video/mp4",
            file_name="gone.mp4", file_size=999999, file_render=1, state="READ", file_meta_json=json.dumps({"d": 12.5}))
@@ -373,11 +381,12 @@ def main():
     fx.add(chat_kind="group", chat_key=G1, api_id=rbytes(8), is_own=0, sender=UNKNOWN_SENDER, kind="text", text="ghost")
     fx.expected["skip"]["sender_unknown"] = 1
     u = new_uid()
-    fx.add(uid=u, chat_kind="group", chat_key=G1, api_id=rbytes(8), is_own=0, sender=B, kind="file",
-           file_mime="image/jpeg", file_size=len(img_in), file_render=1, file_blob_id=rbytes(16), file_key=rbytes(32),
-           file_meta_json=json.dumps({"w": 640, "h": 480}), media_path=fx.put_media(u, img_in), media_sha256=sha(img_in),
-           thumb_path=fx.put_media(u, thumb_android, "thumbs"))
+    r = fx.add(uid=u, chat_kind="group", chat_key=G1, api_id=rbytes(8), is_own=0, sender=B, kind="file",
+               file_mime="image/jpeg", file_size=len(img_in), file_render=1, file_blob_id=rbytes(16),
+               file_key=rbytes(32), file_meta_json=json.dumps({"w": 640, "h": 480}), media_path=fx.put_media(u, img_in),
+               media_sha256=sha(img_in), thumb_path=fx.put_media(u, thumb_android, "thumbs"))
     exp_file_with_data += 1
+    exp_thumbs[r["msg_id"].hex()] = "android"
     fx.add(chat_kind="group", chat_key=G1, api_id=rbytes(8), is_own=0, sender=A, kind="location", loc_lat=1.5, loc_lon=2.5)
     fx.add(chat_kind="group", chat_key=G1, api_id=rbytes(8), is_own=0, sender=A, kind="ballot", ballot_ref=102,
            ballot_data_type=1)
@@ -447,6 +456,7 @@ def main():
         "messages_total": total,
         "messages_inserted": total - skipped,
         "file_with_data": exp_file_with_data,
+        "thumbnails": exp_thumbs,
         "have_audio": have_audio,
         "have_video": have_video,
         "contacts_inserted": 5,

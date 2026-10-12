@@ -39,6 +39,30 @@ final class UIContractTests: XCTestCase {
         }
     }
 
+    /// `ScenarioUITests.testEveryScenarioHasAUITest` only runs with UI automation; this keeps the scenario list honest
+    /// in unit runs too: every recording is in `covered`, has a DE and an EN test method, and every user directive has
+    /// a `UIDriver.perform` case.
+    func testEveryScenarioHasAUITestAndEveryDirectiveAUIAction() throws {
+        let tests = try String(contentsOf: Repo.appDir.appendingPathComponent("Tests/UI/ScenarioUITests.swift"),
+                               encoding: .utf8)
+        let driver = try String(contentsOf: Repo.appDir.appendingPathComponent("Tests/UI/UITestSupport.swift"),
+                                encoding: .utf8)
+        let start = try XCTUnwrap(tests.range(of: "static let covered = ["))
+        let end = try XCTUnwrap(tests[start.upperBound...].range(of: "]"))
+        let covered = try literals(#""([a-z0-9_]+)""#, String(tests[start.upperBound..<end.lowerBound]))
+        XCTAssertFalse(Repo.scenarioNames.isEmpty)
+        for name in Repo.scenarioNames {
+            XCTAssertTrue(covered.contains(name), "ScenarioUITests.covered lacks \(name)")
+            for lang in ["de", "en"] {
+                XCTAssertTrue(tests.contains("try run(\"\(name)\", \"\(lang)\")"), "no XCUITest for \(name) in \(lang)")
+            }
+            for case let .user(screen, answer) in try Repo.scenario(name).items {
+                XCTAssertTrue(driver.contains("(\"\(screen)\", \"\(answer)\")") || driver.contains("(\"\(screen)\", _)"),
+                              "UIDriver has no action for \(screen)/\(answer) (\(name))")
+            }
+        }
+    }
+
     func testIconOnlyButtonsHaveAccessibilityLabels() throws {
         let src = try read(Repo.sources)
         let lines = src.components(separatedBy: "\n")

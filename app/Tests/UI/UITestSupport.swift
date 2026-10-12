@@ -141,14 +141,25 @@ final class UIDriver {
         g.radioButtons.element(boundBy: index).click()
     }
 
+    /// Answers the backup password sheet and returns only once it is closed. The closing sheet stays in the
+    /// accessibility tree for a moment after "Continue" (field already emptied); a check in that window would take it
+    /// for a new prompt and wait for a field that is gone a second later.
+    func answerPasswordPrompt(file: StaticString = #filePath, line: UInt = #line) {
+        let field = app.secureTextFields["field.prompt_password"].firstMatch
+        type("field.prompt_password", "zz-test")
+        click("btn.prompt_ok", file: file, line: line)
+        let gone = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: field)
+        let r = XCTWaiter().wait(for: [gone], timeout: timeout)
+        XCTAssertEqual(r, .completed, "password prompt still open on \(currentScreen ?? "?")", file: file, line: line)
+    }
+
     /// Waits for `target`, passing screens without a directive (S02, S06, S12/S13, S15, S18, S23).
     func reach(_ target: String, file: StaticString = #filePath, line: UInt = #line) {
         let end = Date().addingTimeInterval(timeout * 3)
         while Date() < end {
             if app.secureTextFields["field.prompt_password"].exists {
                 // after a restart the existing backup password is asked again (memory only)
-                type("field.prompt_password", "zz-test")
-                click("btn.prompt_ok")
+                answerPasswordPrompt(file: file, line: line)
                 continue
             }
             guard let s = currentScreen else { usleep(50_000); continue }
@@ -189,8 +200,7 @@ final class UIDriver {
             }
         case ("F-PW-WRONG", "password_entered"):
             click("btn.action.reenter_password")
-            type("field.prompt_password", "zz-test")
-            click("btn.prompt_ok")
+            answerPasswordPrompt(file: file, line: line)
         case ("F-RESTORE-MID", "iphone_restarted"): click("btn.action.continue_s16")
         case ("S21", "reset_threema"):
             click("btn.action.reset_threema")

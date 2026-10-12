@@ -4,7 +4,8 @@
 
     python3 importer/Tests/run_checks.py [--no-build] [--bin PATH]
 
-Needs: Xcode (swift, Core Data), Python 3.13 with Pillow (fixture images), optionally ffmpeg (audio/video fixtures).
+Needs: Xcode (swift, Core Data), Python 3.13 with Pillow (fixture images), ffmpeg (audio/video fixtures; optional
+locally, required on CI so the AVFoundation paths run there).
 Builds the package (`swift build -c release --arch arm64`, products threema-import + the test tools) unless
 --no-build, then generates every input itself under build/importer-checks/ (git-ignored):
   * the synthetic Android data (Fixtures/make_mini_normalized.py, fake ZZ identities, generated media),
@@ -117,6 +118,13 @@ def main():
     subprocess.run([PY, os.path.join(HERE, "Fixtures", "make_mini_normalized.py"), FIX], check=True,
                    capture_output=True)
     exp = json.load(open(f"{FIX}/expected.json"))
+    # without ffmpeg the fixture has no audio/video, so the AVFoundation paths (durations, video thumbnail and size)
+    # go unchecked: CI must cover them on its macOS, a local run only says so
+    av = exp["have_audio"] and exp["have_video"]
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        check("fixture audio+video", av, "ffmpeg missing on the runner (brew install ffmpeg)")
+    elif not av:
+        print("NOTE ffmpeg missing: fixture without audio/video, AVFoundation paths not checked")
     os.makedirs(T)
 
     # ---------------- 1. full import into empty store ----------------
@@ -158,7 +166,19 @@ def main():
     check("own thumb has thumbBlobId", q("SELECT count(*) FROM ZMESSAGE WHERE Z_ENT=? AND ZISOWN=1 AND ZTHUMBNAIL IS NOT NULL AND ZBLOBTHUMBNAILID IS NULL", fm)[0][0] == 0)
     check("no blobId without data", q("SELECT count(*) FROM ZMESSAGE WHERE Z_ENT=? AND ZDATAAVAILABLE1=0 AND ZBLOBID IS NOT NULL", fm)[0][0] == 0)
     check("thumbs have size", q("SELECT count(*) FROM ZIMAGEDATA WHERE ZWIDTH<=0 OR ZHEIGHT<=0")[0][0] == 0)
-    check("thumbnails", q("SELECT count(*) FROM ZMESSAGE WHERE Z_ENT=? AND ZTHUMBNAIL IS NOT NULL", fm)[0][0] == 7)
+    # exactly the file messages the fixture marks (Android thumbnail, or generated from image/video media); a failure
+    # names each one by mime/render/data plus the report's thumbnail counters, so a CI log shows which kind lost it
+    want_thumbs, have_thumbs, kinds = exp["thumbnails"], set(), {}
+    for (zid, mime, render, avail, has_thumb) in q("SELECT ZID, ZMIMETYPE, ZTYPE, ZDATAAVAILABLE1, "
+                                                   "ZTHUMBNAIL IS NOT NULL FROM ZMESSAGE WHERE Z_ENT=?", fm):
+        kinds[bytes(zid).hex()] = f"{mime or '-'} render={render} data={avail}"
+        if has_thumb:
+            have_thumbs.add(bytes(zid).hex())
+    missing = sorted(f"{kinds.get(h, 'not imported')} ({src})" for h, src in want_thumbs.items()
+                     if h not in have_thumbs)
+    unexpected = sorted(kinds[h] for h in have_thumbs - set(want_thumbs))
+    check("thumbnails", not missing and not unexpected,
+          f"missing {missing} unexpected {unexpected} report {rep['entities'].get('thumbnails', {}).get('details')}")
     # json decodes, ints for w/h, duration present for audio/video with data
     bad, durations = 0, 0
     for (j, mime) in q("SELECT ZJSON, ZMIMETYPE FROM ZMESSAGE WHERE Z_ENT=? AND ZJSON!=''", fm):

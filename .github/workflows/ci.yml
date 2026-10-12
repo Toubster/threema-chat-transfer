@@ -157,6 +157,9 @@ jobs:
       - name: fixture tools
         if: steps.pkg.outputs.enabled == 'true'
         run: python -m pip install -r .github/importer-requirements.txt
+      - name: media tools of the synthetic fixture (ffmpeg; without it no audio/video, AVFoundation unchecked)
+        if: steps.pkg.outputs.enabled == 'true'
+        run: brew install ffmpeg
       - name: build threema-import (release, arm64)
         if: steps.pkg.outputs.enabled == 'true'
         run: swift build --package-path importer -c release --arch arm64
@@ -218,7 +221,7 @@ jobs:
   app:
     name: app (${{ matrix.lang }})
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 90   # ~50 min measured with 56 scenario UI tests per language
     strategy:
       fail-fast: false
       matrix:

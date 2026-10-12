@@ -62,19 +62,23 @@ final class ErrorCatalogTests: XCTestCase {
         }
     }
 
-    func testPlaceholdersFormatBytesCountsAndEnums() {
+    func testPlaceholdersFormatBytesCountsAndEnums() throws {
         let loc = Localizer(.de)
+        // separators of the user's region, like Formatters (de_CH "9.6", de_DE/de_AT "9,6")
+        let locale = loc.language.locale
+        let d = try XCTUnwrap(locale.decimalSeparator), g = try XCTUnwrap(locale.groupingSeparator)
         let data = JSONValue.object(["need_bytes": .number(9_600_000_000), "free_bytes": .number(4_200_000_000),
                                      "reason": .string("connection"), "files": .number(12345)])
         let p = ErrorCatalog.placeholders(codeRaw: "E_RESTORE_NOT_STARTED", data: data, loc: loc)
-        XCTAssertEqual(p["need_gb"], "9,6")
-        XCTAssertEqual(p["free_gb"], "4,2")
+        XCTAssertEqual(p["need_gb"], "9\(d)6")
+        XCTAssertEqual(p["free_gb"], "4\(d)2")
+        XCTAssertEqual(p["files"], "12\(g)345")
         XCTAssertEqual(p["reason"], loc.t("code.E_RESTORE_NOT_STARTED.reason.connection"))
         XCTAssertNotEqual(p["reason"], "connection")
         let body = loc.t(ErrorCatalog.bodyKey("E_GUARD_IPHONE_SPACE"),
                          ErrorCatalog.placeholders(codeRaw: "E_GUARD_IPHONE_SPACE", data: data, loc: loc))
         XCTAssertFalse(body.contains("{"), body)
-        XCTAssertTrue(body.contains("9,6"), body)
+        XCTAssertTrue(body.contains("9\(d)6 GB"), body)
     }
 
     func testNeedsNewBackupDropsTheBackupResults() async throws {

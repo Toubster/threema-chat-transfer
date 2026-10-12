@@ -9,7 +9,7 @@ demo_screenshots.py -- the REAL app in demo mode, end to end, and the app screen
     python3 devtools/demo_screenshots.py --install             # + marker tm-demo=1, copy to docs/images/app/<lang>/,
                                                                #   allowlist block "demo screenshots"
     python3 devtools/demo_screenshots.py --engine mock         # MockEngine replay instead of the virtual iPhone
-    python3 devtools/demo_screenshots.py --all-scenarios       # every recording end to end (27 scenarios)
+    python3 devtools/demo_screenshots.py --all-scenarios       # every recording end to end (28 scenarios)
 
 For each scenario and language the signed app (default build/dist/Chat Transfer for Threema.app, `make app`) starts with
 TM_ENGINE=fake:<scenario>: the bundled tmcore runs every command on the virtual iPhone (tmcore --fake-device, no

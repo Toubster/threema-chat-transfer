@@ -20,16 +20,37 @@ final class AppVersionTests: XCTestCase {
     }
 }
 
-/// `{x} GB` never reads "0 GB" for data that exists (small synthetic or text-only backups).
+/// `{x} GB` never reads "0 GB" for data that exists (small synthetic or text-only backups). The separators come from
+/// `AppLanguage.locale`, i.e. the user's region (de_CH writes "6.4", de_DE and de_AT "6,4"; the grouping characters
+/// differ as well), so the expectations are taken from the same locale (CI runs de/CH and en/US).
 final class FormattersTests: XCTestCase {
-    func testGigabytes() {
-        XCTAssertEqual(Formatters.gigabytes(6_400_000_000, lang: .de), "6,4")
-        XCTAssertEqual(Formatters.gigabytes(6_400_000_000, lang: .en), "6.4")
-        XCTAssertEqual(Formatters.gigabytes(220_000_000_000, lang: .en), "220")
-        XCTAssertEqual(Formatters.gigabytes(70_000_000, lang: .de), "0,1")
-        XCTAssertEqual(Formatters.gigabytes(3_000_000, lang: .de), "< 0,1")
-        XCTAssertEqual(Formatters.gigabytes(3_000_000, lang: .en), "< 0.1")
-        XCTAssertEqual(Formatters.gigabytes(0, lang: .en), "0")
+    func testGigabytes() throws {
+        for lang in AppLanguage.allCases {
+            let d = try XCTUnwrap(lang.locale.decimalSeparator), g = try XCTUnwrap(lang.locale.groupingSeparator)
+            let ctx = "\(lang) in \(lang.locale.identifier)"
+            XCTAssertEqual(Formatters.gigabytes(6_400_000_000, lang: lang), "6\(d)4", ctx)
+            XCTAssertEqual(Formatters.gigabytes(70_000_000, lang: lang), "0\(d)1", ctx)
+            XCTAssertEqual(Formatters.gigabytes(3_000_000, lang: lang), "< 0\(d)1", ctx)
+            XCTAssertEqual(Formatters.gigabytes(1, lang: lang), "< 0\(d)1", ctx)
+            XCTAssertEqual(Formatters.gigabytes(0, lang: lang), "0", ctx)
+            XCTAssertEqual(Formatters.gigabytes(220_000_000_000, lang: lang), "220", ctx)
+            XCTAssertEqual(Formatters.gigabytes(1_500_400_000_000, lang: lang), "1\(g)500", ctx)
+        }
+    }
+
+    func testCountsGroupFromTenThousand() throws {
+        for lang in AppLanguage.allCases {
+            let g = try XCTUnwrap(lang.locale.groupingSeparator)
+            XCTAssertEqual(Formatters.count(9_999, lang: lang), "9999", "\(lang) in \(lang.locale.identifier)")
+            XCTAssertEqual(Formatters.count(12_345, lang: lang), "12\(g)345", "\(lang) in \(lang.locale.identifier)")
+        }
+    }
+
+    /// German texts never get English number formats and vice versa, whatever the region (de_CH, en_US, ...).
+    func testLocaleSpeaksTheLanguage() {
+        for lang in AppLanguage.allCases {
+            XCTAssertEqual(lang.locale.language.languageCode?.identifier, lang.rawValue, lang.locale.identifier)
+        }
     }
 }
 
