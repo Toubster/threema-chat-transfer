@@ -852,9 +852,11 @@ final class DemoVideo {
     /// points); nil while the screen's elements are not built.
     private func footerElements() -> [CGRect]? {
         guard let window, AX.find("screen.\(store.screen.id)", in: window) != nil else { return nil }
-        let footer = AX.descendants(window).filter { AX.children($0).isEmpty }
-            .map { window.convertFromScreen(AX.frame($0)) }
-            .filter { $0.width > 0 && $0.height > 0 && $0.maxY <= DemoVideoTiming.footerHeight + 1 }
+        // split into typed steps: one chained expression is too much for the type checker of Xcode 16
+        let leaves: [Any] = AX.descendants(window).filter { AX.children($0).isEmpty }
+        let frames: [CGRect] = leaves.map { window.convertFromScreen(AX.frame($0)) }
+        let top: CGFloat = DemoVideoTiming.footerHeight + 1
+        let footer: [CGRect] = frames.filter { (r: CGRect) -> Bool in r.width > 0 && r.height > 0 && r.maxY <= top }
         return footer.isEmpty ? nil : footer
     }
 
