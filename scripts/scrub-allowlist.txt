@@ -157,3 +157,13 @@ sha256:de15f95c7f775cf20ccfb27614eaa241a62f3334c67ce48307243607432bf8c3 docs/ima
 sha256:b8f4e9fda02fba870ab5acacbc1444d97bf01af84b73a5ae31a6936bc957da0a docs/images/app/en/S22.png
 sha256:68c8c58e6b3c03b812576733a1b9a68b3ef7a0b25c555cab95f8611ad23432a1 docs/images/app/en/S23.png
 # END demo screenshots
+
+# Demo video (docs/images/demo/<lang>/walkthrough.mp4 and .gif): the README walkthrough, recorded in demo mode (DEMO
+# watermark, comment tm-demo=1); the block is rewritten by .github/scripts/allowlist_block.py (devtools/demo_video.py
+# --install, demo-screenshots workflow, integrator).
+# BEGIN demo video (managed by devtools/demo_video.py --install; do not edit by hand)
+sha256:3e0cb5895bca04223331eddac1a33e11e528736a1715c4f89ce84aa27b8471aa docs/images/demo/de/walkthrough.gif
+sha256:ccd7ce8d8aea77117a113cd05b925ed0fe8c152a95b35707d29981f7fb208035 docs/images/demo/de/walkthrough.mp4
+sha256:ec18e62032e69b4986726048471c51abfbcd5a3064b4bf6b77af9f9cbd6a3f63 docs/images/demo/en/walkthrough.gif
+sha256:189cba721b7d032522edf210fa127e9d30718f4a7ce0a67b50557ee1adf12ee1 docs/images/demo/en/walkthrough.mp4
+# END demo video

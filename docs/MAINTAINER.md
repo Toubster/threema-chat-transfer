@@ -49,7 +49,7 @@ Regenerate the deny list whenever private data changes (new device, new real cou
 | `ci.yml` | push, pull request | `scrub`, `lint`, `core-tests`, `contract`, `importer`, `e2e-fixture`, `app` (unit + UI with MockEngine, DE + EN), `package-smoke` |
 | `release.yml` | manual (`workflow_dispatch` with a tag) | builds and attests a **draft** release; never publishes |
 | `upstream-watch.yml` | weekly + manual | new Threema iOS tags, new iOS builds, new Threema Android releases → issues |
-| `demo-screenshots.yml` | manual | demo-mode screenshots DE + EN → pull request |
+| `demo-screenshots.yml` | manual | demo-mode screenshots and/or the README walkthrough video DE + EN → pull request |
 
 Jobs whose component does not exist yet (Swift package, Xcode project, packaging scripts, end-to-end tests) report
 "not present yet" and succeed, so the skeleton stays green while the owners land their parts. Set the repository
@@ -195,6 +195,16 @@ product or of CI.
 - **App screenshots**: only from the demo mode (`demo-screenshots.yml`, or locally `make demo-screenshots INSTALL=1`:
   the signed app with the real engine on the virtual iPhone, driven by its demo autopilot); they carry the PNG text
   marker `tm-demo=1` and a visible "DEMO" watermark. Look at every picture before committing.
+- **README walkthrough video** (`docs/images/demo/<lang>/walkthrough.{mp4,gif}`): the same demo run, recorded by the
+  autopilot (`demo-screenshots.yml` with "video", or locally `make demo-video INSTALL=1 REVIEW=<folder outside the
+  repo>`). The comment `tm-demo=1` is the only metadata (`mark_png.py --check`); the review folder (the workflow
+  artifact `demo-video-review`) has one picture per screen state. Look at them before merging. The window is recorded
+  at 1000×950 pt (`--size`: the app's default width, tall enough that no screen of the run scrolls; the in-process
+  rendering cannot draw the blur under the title bar, so scrolled content would show over it); a run in which a
+  screen's content outgrows the window, or the window did not get that size, fails and names the size that fits. A
+  local run fails when the window is not in front during the recording (grey title bar: another app in front, or the
+  screen locked): keep the Mac unlocked and leave it alone for those few minutes (`--allow-inactive` accepts that for
+  a draft).
 - **Gatekeeper and device photos**: test accounts only, no names, no notifications, clean status bar, EXIF removed.
   Mark them with `python3 .github/scripts/mark_png.py --marker tm-reviewed=1 <files>` (also strips all other metadata)
   only **after** looking at every picture, and put them in a pull request for review.

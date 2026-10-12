@@ -23,6 +23,15 @@ Eine kostenlose Open-Source-App für den Mac (Apple-Chip, macOS 14 oder neuer), 
 English: [README.md](README.md) · Ausführliche Anleitung: [Deutsch](docs/user/de/README.md) ·
 [English](docs/user/en/README.md)
 
+## So sieht es aus
+
+![Demo-Rundgang: die App vom Willkommensbildschirm bis „Geschafft!“, mit virtuellem iPhone und erfundenen Daten](docs/images/demo/de/walkthrough.gif)
+
+Die echte App im Demo-Modus mit virtuellem iPhone und erfundenen Daten. Wartezeiten sind verkürzt („Zeitraffer“): Ein
+echter Umzug dauert etwa 1½ bis 3 Stunden. Auch als Video in voller Auflösung:
+[walkthrough.mp4 herunterladen](docs/images/demo/de/walkthrough.mp4?raw=true) (GitHub spielt Videos aus dem
+Repository nicht direkt ab).
+
 ## Was es macht
 
 Sie sind von Android auf das iPhone umgestiegen und möchten Ihre alten Threema-Chats auf dem iPhone haben. Threema

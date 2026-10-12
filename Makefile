@@ -11,13 +11,13 @@ DMG := build/dist/$(APP_SLUG)-$(VERSION).dmg
 
 .PHONY: help hooks scrub validate codes strings test test-core test-importer contract model-verify \
         python core importer stage app dmg release-artifacts sbom source-bundle smoke verify verify-quarantine \
-        demo-screenshots clean
+        demo-screenshots demo-video clean
 
 help:
 	@echo "checks:    make test | test-core | test-importer | contract | model-verify [MOMD_SOURCE=dir] | scrub | validate | strings"
 	@echo "bundle:    make python | core | importer | stage | app | dmg | verify | verify-quarantine | smoke  [OFFLINE=1]"
 	@echo "release:   make release-artifacts (sbom + source-bundle; needs a clean, committed tree)"
-	@echo "app/data:  make demo-screenshots | record-scenarios | check-scenarios"
+	@echo "app/data:  make demo-screenshots | demo-video [REVIEW=dir] | record-scenarios | check-scenarios"
 	@echo "version $(VERSION); output in build/ (git-ignored)"
 
 hooks:
@@ -103,6 +103,12 @@ smoke:
 demo-screenshots: app
 	$(PY) devtools/demo_screenshots.py $(if $(INSTALL),--install)
 	$(PY) docs/tools/check_docs.py --screenshots-dir build/demo
+
+# The README walkthrough video: the same demo run, recorded by the autopilot (devtools/demo_video.py; needs ffmpeg).
+# Output in build/demo-video/<lang>/; INSTALL=1 copies walkthrough.{mp4,gif} to docs/images/demo/<lang>/ and rewrites
+# the allowlist block "demo video"; REVIEW=<folder outside the repo> adds one picture per screen state.
+demo-video: app
+	$(PY) devtools/demo_video.py $(if $(INSTALL),--install) $(if $(REVIEW),--review "$(REVIEW)")
 
 # Scenario recording is coreB's tool (DESIGN §13.3); the targets exist as soon as devtools/record_scenarios.py does,
 # so the CI gate (make -n check-scenarios) switches the drift check on by itself.

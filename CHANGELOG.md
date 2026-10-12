@@ -2,6 +2,33 @@
 
 Format: one section per version, German first, then English. Versions: `VERSIONS.md`.
 
+## 0.9.0-beta.2 (in Arbeit)
+
+**Deutsch**
+- **Demo-Video in der README** (DE/EN): die echte App im Demo-Modus (virtuelles iPhone, erfundene Daten, „DEMO“) vom
+  Willkommensbildschirm bis „Geschafft!“, mit Mauszeiger, Klicks und markiertem Zeitraffer. Erzeugt mit
+  `make demo-video INSTALL=1` (Aufnahmemodus des Demo-Autopiloten, `TM_VIDEO_DIR`; nur mit `fake:`/`mock:`-Engine).
+  Das Fenster wird in der App selbst gerendert, kein Bildschirm-Mitschnitt. Für Nutzer ändert sich nichts.
+- **CI repariert** (nur Tests und Werkzeuge, die App ist unverändert):
+  - Zahlen-Tests lesen Dezimal- und Tausendertrennzeichen aus der Sprache der App (de_CH schreibt korrekt „9.6 GB“).
+  - Fehlender UI-Test für das Szenario `threema_problem_reported` ergänzt, plus Prüfung, dass jedes Szenario einen hat.
+  - UI-Testtreiber: wartet, bis die Passwortabfrage wirklich geschlossen ist (sonst Wettlauf mit der Schließanimation).
+  - Importer-Job installiert ffmpeg, damit Audio- und Video-Fixtures entstehen; die Thumbnail-Prüfung nennt fehlende
+    Einträge.
+  - Zeitlimit der App-Jobs 90 statt 60 Minuten.
+
+**English**
+- **Demo video in the README** (DE/EN): the real app in demo mode (virtual iPhone, made-up data, "DEMO") from the
+  welcome screen to "Done!", with pointer, clicks and marked fast-forward. Made with `make demo-video INSTALL=1`
+  (recording mode of the demo autopilot, `TM_VIDEO_DIR`; `fake:`/`mock:` engine only). The window is rendered inside
+  the app, no screen recording. Nothing changes for users.
+- **CI fixed** (tests and tooling only, the app is unchanged):
+  - Number tests take decimal and grouping separators from the app language's locale (de_CH correctly shows "9.6 GB").
+  - Missing UI test for the `threema_problem_reported` scenario added, plus a check that every scenario has one.
+  - UI test driver waits until the password prompt has really closed (race with the closing animation).
+  - The importer job installs ffmpeg so the audio and video fixtures exist; the thumbnail check names missing entries.
+  - App job timeout 90 instead of 60 minutes.
+
 ## 0.9.0-beta.1
 
 **Deutsch**

@@ -16,6 +16,7 @@ import Foundation
 /// | `TM_DEMO_RESOURCES` | staged `Resources/` with the real engine, only honoured for `fake:` (demo screenshots) |
 /// | `TM_DEMO_FIXTURES` | `fixtures/` of a checkout for `fake:` runs (the virtual iPhone's backup generator) |
 /// | `TM_AUTOPILOT` | `1`: play the scenario's user directives and save screenshots (`DemoAutopilot`, demo only) |
+/// | `TM_VIDEO_DIR` | with `TM_AUTOPILOT`: record the run as frames for the README video (`DemoVideo`, demo only) |
 /// | `TM_APPEARANCE` | `light` / `dark`: fixed appearance for demo screenshots (demo only) |
 /// | `TM_PYTHON` | Debug builds only: interpreter for `live` from a source checkout (integration) |
 public struct AppEnvironment {

@@ -51,6 +51,14 @@
         {"id": "F-PW-WRONG", "scenario": "wrong_backup_password", "title": "Wrong iPhone backup password"}
       ]
     },
+    "demo": {
+      "source": "demo",
+      "how": "README walkthrough video: demo mode like the app screenshots, recorded by the app's demo autopilot (TM_VIDEO_DIR) and encoded by devtools/demo_video.py; scenario and the screen the recording ends on",
+      "path": "docs/images/demo/{lang}/{id}.{mp4,gif}",
+      "items": [
+        {"id": "walkthrough", "scenario": "happy", "end": "S19", "title": "From the first screen to the success screen"}
+      ]
+    },
     "gatekeeper": {
       "source": "vm",
       "how": "clean macOS VM user per macOS version, release draft downloaded from GitHub; reviewed by the maintainer",

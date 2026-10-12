@@ -7,7 +7,8 @@ Two layers:
 
   Layer 1  generic patterns that live in this repo and run everywhere (CI, forks, hooks):
            UDIDs, SHA1/old UDIDs, ECIDs, Threema-ID-shaped tokens, e-mail addresses, home paths,
-           device names, phone numbers, private IPs, secrets, binary files, images, example counts in docs/,
+           device names, phone numbers, private IPs, secrets, binary files, images (PNG/JPEG, the demo video's
+           GIF/MP4: marker required), example counts in docs/,
            the repository account outside a repository link (the account is read from NOTICE: it may appear only
            in https://github.com/<account>/... URLs), hard-coded developer workspace paths ($HOME/<folder>/...).
            With --publish-identity (pre-push, publishing): every commit of --commits must use a GitHub no-reply
@@ -96,7 +97,7 @@ RX_DOC_COUNT = re.compile(
     r"Kontakte|contacts?|Zeilen|rows?|Einträge|entries|Konversationen|conversations?)\b")
 CANONICAL_COUNTS = {"18", "4", "2", "12345", "1234"}
 TEXT_EXT_BINARY_SNIFF = 8192
-IMAGE_EXT = {".png", ".jpg", ".jpeg"}
+IMAGE_EXT = {".png", ".jpg", ".jpeg", ".gif", ".mp4"}
 
 
 @dataclass
@@ -308,6 +309,10 @@ def scan_image(rel: str, data: bytes) -> list[Finding]:
         if any(c == b"ICCP:" for c in texts):
             # the display profile of the capturing Mac names the display model (.github/scripts/mark_png.py)
             out.append(Finding(rel, 0, "image_icc_profile"))
+    elif data[:6] in (b"GIF87a", b"GIF89a") or data[4:8] == b"ftyp":
+        # the demo video (devtools/demo_video.py): GIF comment extension / MP4 comment item, checked in detail by
+        # .github/scripts/mark_png.py --check
+        has_marker = any(m in data for m in markers)
     elif data.startswith(b"\xff\xd8"):
         has_marker = any(m in data for m in markers)  # XMP packet or COM segment
         pos = 2

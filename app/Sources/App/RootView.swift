@@ -43,6 +43,7 @@ struct WizardWindowContent: View {
         }
         .frame(minWidth: WindowMetrics.minWidth, minHeight: WindowMetrics.minHeight)
         .overlay { if store.deps.isDemo { DemoWatermark() } }
+        .modifier(DemoVideo.ActiveControls())
     }
 }
 

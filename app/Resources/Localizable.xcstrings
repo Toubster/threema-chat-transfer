@@ -5870,6 +5870,42 @@
         }
       }
     },
+    "common.demo.video.caption" : {
+      "comment" : "app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demo · virtuelles iPhone · erfundene Daten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demo · virtual iPhone · made-up data"
+          }
+        }
+      }
+    },
+    "common.demo.video.fast_forward" : {
+      "comment" : "app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitraffer"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast-forward"
+          }
+        }
+      }
+    },
     "common.done" : {
       "comment" : "app",
       "extractionState" : "manual",

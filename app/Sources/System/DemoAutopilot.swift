@@ -18,6 +18,7 @@ import Foundation
 /// | `TM_AUTOPILOT_REPORT` | JSON report: end screen, captured / missing screenshots, error |
 /// | `TM_SCREENSHOT_DIR`, `TM_SCREENSHOT_IDS` | output folder and the wanted ids (`S00`, `S21-data`, `F-DCIM`, …) |
 /// | `TM_DEMO_FIXTURES` | `fixtures/` of a checkout: synthetic passwords (canaries.json); passed to the engine |
+/// | `TM_VIDEO_DIR`, `TM_VIDEO_FPS`, `TM_VIDEO_END` | recording mode (`DemoVideo`): frames for the README video |
 ///
 /// Exit codes: 0 done, 75 = `relaunch` marker reached (the caller starts the app again with
 /// `TM_AUTOPILOT_AFTER_RELAUNCH=1`), 3 = the scenario could not be played (see the report).
@@ -31,6 +32,7 @@ final class DemoAutopilot {
         var shotsDir: URL?
         var wanted: Set<String>
         var fixtures: URL?
+        var video: DemoVideo.Config?
 
         static func from(_ env: [String: String], engineSpec: String) -> Config? {
             guard env["TM_AUTOPILOT"] == "1" else { return nil }
@@ -49,7 +51,8 @@ final class DemoAutopilot {
             return Config(scenario: name, androidFiles: files, afterRelaunch: env["TM_AUTOPILOT_AFTER_RELAUNCH"] == "1",
                           report: env["TM_AUTOPILOT_REPORT"].map { URL(fileURLWithPath: $0) },
                           shotsDir: env["TM_SCREENSHOT_DIR"].map { URL(fileURLWithPath: $0, isDirectory: true) },
-                          wanted: Set(ids), fixtures: env["TM_DEMO_FIXTURES"].map { URL(fileURLWithPath: $0) })
+                          wanted: Set(ids), fixtures: env["TM_DEMO_FIXTURES"].map { URL(fileURLWithPath: $0) },
+                          video: DemoVideo.Config.from(env))
         }
     }
 
@@ -72,6 +75,8 @@ final class DemoAutopilot {
 
     let store: WizardStore
     let cfg: Config
+    /// Recording mode (`TM_VIDEO_DIR`); nil for screenshot runs, which then behave exactly as without it.
+    let video: DemoVideo?
     private var pending: Set<String>
     private var captured: [String] = []
     private var sink: AnyCancellable?
@@ -81,6 +86,7 @@ final class DemoAutopilot {
         self.store = store
         self.cfg = cfg
         self.pending = cfg.wanted
+        self.video = cfg.video.map { DemoVideo(cfg: $0, store: store) }
     }
 
     /// The synthetic password of the fixtures (Android backups, virtual iPhone with encryption on).
@@ -172,6 +178,7 @@ final class DemoAutopilot {
             self.screensSeen.append(next.id)
             self.capture(self.store.screen)
         }
+        video?.begin()
         var items = script.items
         if cfg.afterRelaunch, let i = items.firstIndex(where: { if case .relaunch = $0 { return true }; return false }) {
             items = Array(items[(i + 1)...])
@@ -195,6 +202,8 @@ final class DemoAutopilot {
             if store.screen == .s20, script.blocks.contains(where: { $0.cmd == EngineCommand.cleanup.rawValue }),
                !store.copiesDeleted {
                 await captureSettled()
+                await video?.dwell()
+                await tap("btn.delete_copies")
                 await store.cleanup("work")
                 await settle()
             }
@@ -206,6 +215,7 @@ final class DemoAutopilot {
                 await settle()
                 await captureSettled()
             }
+            await video?.endHold()
             finish(error: nil, exit: 0)
         } catch {
             await captureSettled()
@@ -223,13 +233,15 @@ final class DemoAutopilot {
 
     private func finish(error: Error?, exit code: Int32) {
         sink = nil
+        let recording: Any = video?.finish() ?? NSNull()
         if let r = cfg.report {
             let obj: [String: Any] = ["scenario": cfg.scenario, "end_screen": shotID(store.screen),
                                       "captured": captured, "missing": pending.sorted(),
                                       "screens": screensSeen, "exit": Int(code),
                                       "internal_reason": store.internalReason ?? NSNull(),
                                       "last_code": store.error?.codeRaw ?? NSNull(),
-                                      "error": error.map { String(describing: $0) } ?? NSNull()]
+                                      "error": error.map { String(describing: $0) } ?? NSNull(),
+                                      "video": recording]
             if let d = try? JSONSerialization.data(withJSONObject: obj, options: [.prettyPrinted, .sortedKeys]) {
                 try? d.write(to: r)
             }
@@ -264,11 +276,17 @@ final class DemoAutopilot {
             if store.screen.id == target { return }
             await captureSettled()
             switch store.screen {
-            case .s02 where store.host != nil: store.confirmHost()
+            case .s02 where store.host != nil:
+                await video?.dwell()
+                await tap("btn.continue") { store.confirmHost() }
             case .s02: await store.runHostCheck()
             case .s03 where store.device == nil: await store.runDeviceCheck()
-            case .s06 where store.normalized != nil: store.confirmAndroid()
-            case .s23 where store.resume != nil: store.continueResume()
+            case .s06 where store.normalized != nil:
+                await video?.dwell()
+                await tap("btn.continue") { store.confirmAndroid() }
+            case .s23 where store.resume != nil:
+                await video?.dwell()
+                await tap("btn.resume_continue") { store.continueResume() }
             default: throw Failure.wrongScreen(expected: target, actual: store.screen.id)
             }
         }
@@ -308,22 +326,29 @@ final class DemoAutopilot {
                     w.setContentSize(size)
                 }
             }
-            store.existingPasswordChoice = .known
+            if video == nil { store.existingPasswordChoice = .known }    // video: clicked below, after reading
         }
         if screen != "S05" { await captureSettled() }
+        // S05 was read before its file was chosen (S04 "done"); now only the file row and the password field are new
+        await video?.dwell(upTo: screen == "S05" ? 1.5 : DemoVideoTiming.maxDwell)
+        // every action goes through `tap`/`type`: in video mode the pointer clicks the control first (the same controls
+        // as the UI test driver, UITestSupport.swift); otherwise the action runs at once
         switch (screen, answer) {
-        case ("S00", "get_started"): store.getStarted()
+        case ("S00", "get_started"): await tap("btn.get_started") { store.getStarted() }
         case ("S01", "accepted"):
-            store.disclaimerAccepted = true
-            store.acceptDisclaimer()
+            await tap("check.disclaimer") { store.disclaimerAccepted = true }
+            await tap("btn.continue") { store.acceptDisclaimer() }
         case ("S03", "continue"):
             if store.device == nil { await store.runDeviceCheck() }
-            store.confirmDevice()
+            await tap("btn.continue") { store.confirmDevice() }
         case ("S03", "prepare_android"):
             if store.device == nil { await store.runDeviceCheck() }
-            store.prepareAndroidOnly()
+            await tap("btn.prepare_android") { store.prepareAndroidOnly() }
         case ("S04", "done"):
-            store.go(.s05)
+            await tap("btn.done") { store.go(.s05) }
+            // "Auswählen …" takes the scenario's synthetic backup: no file panel (it would show this Mac's folders)
+            await video?.dwell(upTo: 1.0)
+            await tap("btn.choose")
             await store.setAndroidFiles(androidFiles())
         case ("S05", "password_entered"):
             if store.inspect == nil { await store.setAndroidFiles(androidFiles()) }
@@ -331,54 +356,91 @@ final class DemoAutopilot {
             await captureSettled()
             // a scenario that enters the Android password twice types the wrong one first
             let pw = comesAgain("S05", "password_entered") ? Self.wrongEntry : rightPassword
-            for r in store.inspect?.refsNeedingPassword ?? [] { store.androidPasswordInput[r] = pw }
+            for r in store.inspect?.refsNeedingPassword ?? [] {
+                await tap("field.android_password.\(r)")
+                await type(pw) { store.androidPasswordInput[r] = $0 }
+            }
             store.textOnlyConfirmed = true
+            await tap("btn.check")
             await store.runAndroidNormalize()
         case ("S07", "all_checked"):
-            for i in store.threemaItemsNeeded { store.toggle(\.threemaChecklist, i, true) }
+            for i in store.threemaItemsNeeded { await tap("check.\(i)") { store.toggle(\.threemaChecklist, i, true) } }
+            await tap("btn.continue")
             await store.confirmThreema()
         case ("S08", "all_checked"):
-            for i in WizardStore.settingsItems { store.toggle(\.settingsChecklist, i, true) }
+            for i in WizardStore.settingsItems {
+                await tap("check.\(i)") { store.toggle(\.settingsChecklist, i, true) }
+            }
+            await tap("btn.continue")
             await store.confirmSettings()
         case ("S09", "icloud"), ("S09", "finder"):
-            store.safetyNetChoice = answer
-            store.safetyNetConfirmed = true
+            await tap("check.safety_net") { store.safetyNetConfirmed = true }
+            await tap("radio.safety_net", option: answer == "icloud" ? 0 : 1) { store.safetyNetChoice = answer }
+            await tap("btn.continue")
             await store.confirmSafetyNet()
         case ("S10b", "password_entered"):
-            store.backupPasswordInput = comesAgain("F-PW-WRONG", "password_entered") ? Self.wrongEntry : rightPassword
-            store.confirmExistingPassword()
+            await tap("radio.existing_password", option: 0) { store.existingPasswordChoice = .known }
+            await tap("field.backup_password")
+            await type(comesAgain("F-PW-WRONG", "password_entered") ? Self.wrongEntry : rightPassword) {
+                store.backupPasswordInput = $0
+            }
+            await tap("btn.continue") { store.confirmExistingPassword() }
         case ("S10a", _):
             store.prepareGeneratedPassword()
-            store.lastFourInput = String(store.generatedPassword.suffix(4))
+            await tap("field.last_four")
+            await type(String(store.generatedPassword.suffix(4))) { store.lastFourInput = $0 }
+            await tap("btn.enable_encryption")
             await store.enableEncryption()
         case ("S11", "all_checked"):
-            for i in WizardStore.offlineItems { store.toggle(\.offlineChecklist, i, true) }
-            store.startBackup()
+            for i in WizardStore.offlineItems { await tap("check.\(i)") { store.toggle(\.offlineChecklist, i, true) } }
+            await tap("btn.start_backup") { store.startBackup() }
         case ("S14", "transfer_now"):
-            store.transferChecks = [true, true]
+            await tap("check.apple_backup") { store.transferChecks[0] = true }
+            await tap("check.apple_password") { store.transferChecks[1] = true }
+            await tap("btn.transfer_now")
             await store.transferNow()
         case ("S16", _):
-            store.answerBuddy(answer)
-            store.confirmAfterRestart()
-        case ("S17", "old_chats_present"): store.threemaChecked(ok: true)
-        case ("S17", "problem"): store.threemaChecked(ok: false)
-        case ("S19", "continue"): store.finishSuccess()
+            await tap("radio.buddy", option: S16AfterRestart.answers.firstIndex(of: answer) ?? 0) {
+                store.answerBuddy(answer)
+            }
+            await tap("btn.continue") { store.confirmAfterRestart() }
+        case ("S17", "old_chats_present"): await tap("btn.chats_ok") { store.threemaChecked(ok: true) }
+        case ("S17", "problem"): await tap("btn.problem") { store.threemaChecked(ok: false) }
+        case ("S19", "continue"): await tap("btn.continue") { store.finishSuccess() }
         case ("S21", "reset_threema"):
-            store.perform(.resetThreema)
+            await tap("btn.action.reset_threema") { store.perform(.resetThreema) }
             store.dialog = nil
             await store.resetThreema()
-        case ("F-DCIM", "new_backup"), ("F-AIRPLANE", "new_backup"): store.perform(.newBackup)
-        case ("F-FRESHNESS", "new_backup"): store.perform(.autoNewBackup)
+        case ("F-DCIM", "new_backup"), ("F-AIRPLANE", "new_backup"):
+            await tap("btn.action.new_backup") { store.perform(.newBackup) }
+        case ("F-FRESHNESS", "new_backup"): await tap("btn.action.auto_new_backup") { store.perform(.autoNewBackup) }
         case ("F-PW-WRONG", "password_entered"):
-            store.perform(.reenterPassword)
+            await tap("btn.action.reenter_password") { store.perform(.reenterPassword) }
             for _ in 0..<500 where store.sheet != .passwordPrompt { try? await Task.sleep(nanoseconds: 2_000_000) }
             store.submitPasswordPrompt(rightPassword)
-        case ("F-RESTORE-MID", "iphone_restarted"): store.perform(.continueS16)
-        case ("S20", "delete_copies"): await store.cleanup("work")
-        case ("S23", "continue"): store.continueResume()
+        case ("F-RESTORE-MID", "iphone_restarted"): await tap("btn.action.continue_s16") { store.perform(.continueS16) }
+        case ("S20", "delete_copies"):
+            await tap("btn.delete_copies")
+            await store.cleanup("work")
+        case ("S23", "continue"): await tap("btn.resume_continue") { store.continueResume() }
         default: throw Failure.unknownAnswer(screen, answer)
         }
         await settle()
+    }
+
+    // MARK: - video steps (just the action without a recording)
+
+    /// Video mode: the pointer glides to the control `id` (radio button `option` of a group) and clicks, then `apply`
+    /// (the autopilot's action) runs. Without a recording `apply` runs at once.
+    private func tap(_ id: String, option: Int? = nil, _ apply: () -> Void = {}) async {
+        guard let video else { apply(); return }
+        await video.tap(id, option: option, apply: apply)
+    }
+
+    /// Video mode: `text` is typed at reading speed (`set` gets the growing prefix); otherwise `set(text)` at once.
+    private func type(_ text: String, _ set: (String) -> Void) async {
+        guard let video else { set(text); return }
+        await video.type(text, set: set)
     }
 }
 

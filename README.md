@@ -23,6 +23,15 @@ A free, open-source app for the Mac (Apple silicon, macOS 14 or later), in Germa
 Deutsch: [README.de.md](README.de.md) · Full user guide: [English](docs/user/en/README.md) ·
 [Deutsch](docs/user/de/README.md)
 
+## See it in action
+
+![Demo walkthrough: the app from the welcome screen to "Done!", with a virtual iPhone and made-up data](docs/images/demo/en/walkthrough.gif)
+
+The real app in demo mode with a virtual iPhone and made-up data. Waiting times are shortened ("Fast-forward"): a
+real transfer takes about 1½ to 3 hours. Also as a full-resolution video:
+[download walkthrough.mp4](docs/images/demo/en/walkthrough.mp4?raw=true) (GitHub does not play videos stored in the
+repository inline).
+
 ## What it does
 
 You switched from Android to iPhone and want your old Threema chats on the iPhone. Threema Safe moves your Threema ID
